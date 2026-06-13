@@ -11,11 +11,11 @@
         <td><%= short_time(failed.created_at) %></td>
         <td>
           <% if SolidWebUi::Queue.config.enable_retry %>
-            <%= button_to "Retry", retry_failed_execution_path(failed), class: "swui-btn" %>
+            <%= swui_action_button(label: "Retry", url: retry_failed_execution_path(failed)) %>
           <% end %>
           <% if SolidWebUi::Queue.config.enable_discard %>
-            <%= button_to "Discard", failed_execution_path(failed), method: :delete, class: "swui-btn swui-btn--danger",
-                          form: { data: { turbo_confirm: "Discard this job permanently?" } } %>
+            <%= swui_action_button(label: "Discard", url: failed_execution_path(failed), method: :delete,
+                                   danger: true, confirm: "Discard this job permanently?") %>
           <% end %>
         </td>
       </tr>

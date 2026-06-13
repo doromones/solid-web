@@ -91,3 +91,25 @@ Theming lives on `SolidWebUi.config` and applies to all three dashboards — see
 | `color_scheme` | String | `"auto"` | `"auto"` \| `"light"` \| `"dark"`. |
 | `stylesheet` | Boolean | `true` | Link the bundled stylesheet. `false` lets the host style everything. |
 | `extra_stylesheets` | Array | `[]` | Extra Propshaft stylesheet names linked after the bundled one. |
+
+## Live auto-refresh
+
+Each dashboard polls itself so the stats, queues and tables stay current without a
+manual reload. The page header carries a frequency `<select>`, a countdown to the
+next refresh and a manual refresh button; only the data region (a turbo-frame) is
+reloaded — morphed in place when [Turbo](https://turbo.hotwired.dev) is on the page,
+otherwise fetched and swapped. The chosen interval is remembered per browser, and
+polling pauses while the tab is hidden. The bundled JS is linked by
+`solid_web_ui_head_tags` alongside the stylesheet.
+
+These settings live on `SolidWebUi.config` and apply to all three dashboards:
+
+| Setting | Type | Default | Purpose |
+|---------|------|---------|---------|
+| `javascript` | Boolean | `true` | Link the bundled live-refresh JS. `false` ships no JS (static dashboards). |
+| `refresh_interval` | Integer | `10` | Pre-selected refresh interval in **seconds**; `0` starts with auto-refresh off. |
+| `refresh_intervals` | Array | `[0, 2, 5, 10, 30, 60]` | Choices offered in the frequency `<select>` (seconds; `0` = Off). |
+
+The controls are added by `SolidWebUi::Ui::PageComponent` (via `swui_page`), which
+wraps the page body in the refreshable frame. Pass `swui_page(..., refresh: false)`
+for a page that should not auto-refresh.

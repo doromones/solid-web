@@ -1,4 +1,5 @@
 /*! tailwindcss v4.3.0 | MIT License | https://tailwindcss.com */
+@layer properties;
 @layer theme, components, utilities;
 @layer utilities {
   .static {
@@ -9,6 +10,12 @@
   }
   .contents {
     display: contents;
+  }
+  .hidden {
+    display: none;
+  }
+  .filter {
+    filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
   }
 }
 @layer components {
@@ -46,6 +53,50 @@
     display: flex;
     flex-wrap: wrap;
     gap: 0.25rem;
+  }
+  .solid-web-ui .swui-refresh-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+  }
+  .solid-web-ui .swui-refresh {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .solid-web-ui .swui-refresh__field {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .solid-web-ui .swui-refresh__label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--swui-color-muted);
+  }
+  .solid-web-ui .swui-refresh__select {
+    padding: 0.3rem 0.5rem;
+    border: 1px solid var(--swui-color-border);
+    border-radius: var(--swui-radius);
+    background: var(--swui-color-surface);
+    color: var(--swui-color-text);
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .solid-web-ui .swui-refresh__select:hover {
+    border-color: var(--swui-color-primary);
+  }
+  .solid-web-ui .swui-refresh__status {
+    font-size: 0.8rem;
+    color: var(--swui-color-muted);
+    font-variant-numeric: tabular-nums;
+    min-width: 8.5rem;
+  }
+  .solid-web-ui .swui-refresh__now {
+    line-height: 1;
+    padding: 0.35rem 0.55rem;
   }
   .solid-web-ui .swui-nav__link {
     display: inline-block;
@@ -228,5 +279,77 @@
     font-size: 1.05rem;
     font-weight: 600;
     margin: 1.5rem 0 0.75rem;
+  }
+}
+@property --tw-blur {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-brightness {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-contrast {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-grayscale {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-hue-rotate {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-invert {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-opacity {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-saturate {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-sepia {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-drop-shadow {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-drop-shadow-color {
+  syntax: "*";
+  inherits: false;
+}
+@property --tw-drop-shadow-alpha {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --tw-drop-shadow-size {
+  syntax: "*";
+  inherits: false;
+}
+@layer properties {
+  @supports ((-webkit-hyphens: none) and (not (margin-trim: inline))) or ((-moz-orient: inline) and (not (color:rgb(from red r g b)))) {
+    *, ::before, ::after, ::backdrop {
+      --tw-blur: initial;
+      --tw-brightness: initial;
+      --tw-contrast: initial;
+      --tw-grayscale: initial;
+      --tw-hue-rotate: initial;
+      --tw-invert: initial;
+      --tw-opacity: initial;
+      --tw-saturate: initial;
+      --tw-sepia: initial;
+      --tw-drop-shadow: initial;
+      --tw-drop-shadow-color: initial;
+      --tw-drop-shadow-alpha: 100%;
+      --tw-drop-shadow-size: initial;
+    }
   }
 }

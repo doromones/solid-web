@@ -13,7 +13,24 @@
       <% end %>
     </header>
     <main class="swui-page__body">
-      <%= content %>
+      <% if refresh? %>
+        <%# Controls sit just above the data region, right-aligned, and OUTSIDE the %>
+        <%# frame so the <select> value and the countdown survive every reload. %>
+        <div class="swui-refresh-bar">
+          <%= render(SolidWebUi::Ui::RefreshControlsComponent.new(frame_id: SolidWebUi::Ui::PageComponent::FRAME_ID)) %>
+        </div>
+        <%# The body is reloaded in place by the bundled JS (morph when Turbo is %>
+        <%# present). No src here: JS sets it at refresh time to avoid a redundant %>
+        <%# fetch on initial load. data-turbo-action="advance" promotes in-frame %>
+        <%# navigations (stat cards, filter tabs, pagination) to update the URL, so %>
+        <%# the address bar tracks the current view and auto-refresh/reload target %>
+        <%# it instead of snapping back to the dashboard. %>
+        <turbo-frame id="<%= SolidWebUi::Ui::PageComponent::FRAME_ID %>" refresh="morph" data-turbo-action="advance">
+          <%= content %>
+        </turbo-frame>
+      <% else %>
+        <%= content %>
+      <% end %>
     </main>
   </div>
 </div>

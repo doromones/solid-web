@@ -21,6 +21,7 @@ RSpec.describe "SolidWebUi::Cable", type: :request do
       expect(response.body).to include("solid-web-ui")
       expect(response.body).to include("Messages")
       expect(response.body).to include("chat:1") # top channel
+      expect(response.body).to include('id="swui-refresh-frame"', "data-swui-refresh")
     end
   end
 
