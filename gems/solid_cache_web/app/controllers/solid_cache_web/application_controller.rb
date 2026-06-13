@@ -3,6 +3,7 @@
 module SolidCacheWeb
   class ApplicationController < SolidWebUi.resolve_base_controller(SolidCacheWeb.config.base_controller_class)
     layout "solid_web_ui"
+    helper SolidWebUi::ComponentHelper
 
     private
 

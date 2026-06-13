@@ -1,9 +1,9 @@
 <% content_for :title, "Processes" %>
-<%= render SolidWebUi::Ui::PageComponent.new(title: "Processes", nav: queue_nav(:processes)) do %>
-  <%= render SolidWebUi::Ui::TableComponent.new(headers: [ "Kind", "Name", "PID", "Host", "Last heartbeat" ], empty_message: "No running processes.") do %>
+<%= swui_page(title: "Processes", nav: queue_nav(:processes)) do %>
+  <%= swui_table(headers: [ "Kind", "Name", "PID", "Host", "Last heartbeat" ], empty_message: "No running processes.") do %>
     <% @processes.each do |process| %>
       <tr>
-        <td><%= render SolidWebUi::Ui::StatusBadgeComponent.new(label: process.kind, status: :info) %></td>
+        <td><%= swui_status_badge(label: process.kind, status: :info) %></td>
         <td><%= process.name %></td>
         <td><%= process.pid %></td>
         <td><%= process.hostname %></td>

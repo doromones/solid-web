@@ -1,12 +1,12 @@
 <% content_for :title, "Failed jobs" %>
-<%= render SolidWebUi::Ui::PageComponent.new(title: "Failed jobs", nav: queue_nav(:failed)) do %>
-  <%= render SolidWebUi::Ui::TableComponent.new(headers: [ "ID", "Job", "Queue", "Exception", "Message", "Failed at", "" ], empty_message: "No failed jobs. 🎉") do %>
+<%= swui_page(title: "Failed jobs", nav: queue_nav(:failed)) do %>
+  <%= swui_table(headers: [ "ID", "Job", "Queue", "Exception", "Message", "Failed at", "" ], empty_message: "No failed jobs. 🎉") do %>
     <% @failed.each do |failed| %>
       <tr>
         <td><%= failed.id %></td>
         <td><%= failed.job.class_name %></td>
         <td><%= failed.job.queue_name %></td>
-        <td><%= render SolidWebUi::Ui::StatusBadgeComponent.new(label: failed.exception_class.to_s, status: :failed) %></td>
+        <td><%= swui_status_badge(label: failed.exception_class.to_s, status: :failed) %></td>
         <td><%= truncate(failed.message.to_s, length: 80) %></td>
         <td><%= short_time(failed.created_at) %></td>
         <td>
@@ -22,5 +22,5 @@
     <% end %>
   <% end %>
 
-  <%= render SolidWebUi::Ui::PaginatorComponent.new(paginator: @paginator, page_url: ->(page) { failed_executions_path(page: page) }) %>
+  <%= swui_paginator(paginator: @paginator, page_url: ->(page) { failed_executions_path(page: page) }) %>
 <% end %>

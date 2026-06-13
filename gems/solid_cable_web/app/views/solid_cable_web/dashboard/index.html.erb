@@ -1,10 +1,10 @@
 <% content_for :title, "#{SolidCableWeb.config.page_title} · Dashboard" %>
-<%= render SolidWebUi::Ui::PageComponent.new(title: SolidCableWeb.config.page_title, nav: cable_nav(:dashboard)) do %>
+<%= swui_page(title: SolidCableWeb.config.page_title, nav: cable_nav(:dashboard)) do %>
   <div class="swui-grid">
-    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "Messages", value: number_with_delimiter(@total), tone: :primary) %>
-    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "Channels", value: @channel_count, href: channels_path) %>
-    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "Last hour", value: number_with_delimiter(@last_hour)) %>
-    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "Trimmable", value: number_with_delimiter(@trimmable), tone: @trimmable.positive? ? :warning : :neutral) %>
+    <%= swui_stat_card(label: "Messages", value: number_with_delimiter(@total), tone: :primary) %>
+    <%= swui_stat_card(label: "Channels", value: @channel_count, href: channels_path) %>
+    <%= swui_stat_card(label: "Last hour", value: number_with_delimiter(@last_hour)) %>
+    <%= swui_stat_card(label: "Trimmable", value: number_with_delimiter(@trimmable), tone: @trimmable.positive? ? :warning : :neutral) %>
   </div>
 
   <% if SolidCableWeb.config.enable_trim %>
@@ -13,7 +13,7 @@
   <% end %>
 
   <h2 class="swui-section-title">Top channels</h2>
-  <%= render SolidWebUi::Ui::TableComponent.new(headers: [ "Channel", "Messages" ], empty_message: "No messages broadcast yet.") do %>
+  <%= swui_table(headers: [ "Channel", "Messages" ], empty_message: "No messages broadcast yet.") do %>
     <% @top_channels.each do |channel, count| %>
       <tr>
         <td><code><%= readable_channel(channel) %></code></td>

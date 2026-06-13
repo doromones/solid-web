@@ -1,6 +1,6 @@
 <% content_for :title, "Recurring tasks" %>
-<%= render SolidWebUi::Ui::PageComponent.new(title: "Recurring tasks", nav: queue_nav(:recurring)) do %>
-  <%= render SolidWebUi::Ui::TableComponent.new(headers: [ "Key", "Schedule", "Class / Command", "Queue", "Type" ], empty_message: "No recurring tasks.") do %>
+<%= swui_page(title: "Recurring tasks", nav: queue_nav(:recurring)) do %>
+  <%= swui_table(headers: [ "Key", "Schedule", "Class / Command", "Queue", "Type" ], empty_message: "No recurring tasks.") do %>
     <% @tasks.each do |task| %>
       <tr>
         <td><%= task.key %></td>
@@ -8,8 +8,8 @@
         <td><%= task.class_name.presence || task.command %></td>
         <td><%= task.queue_name %></td>
         <td>
-          <%= render SolidWebUi::Ui::StatusBadgeComponent.new(label: task.static? ? "static" : "dynamic",
-                                                              status: task.static? ? :info : :neutral) %>
+          <%= swui_status_badge(label: task.static? ? "static" : "dynamic",
+                                status: task.static? ? :info : :neutral) %>
         </td>
       </tr>
     <% end %>

@@ -1,6 +1,6 @@
 <% content_for :title, "Cache entries" %>
-<%= render SolidWebUi::Ui::PageComponent.new(title: "Cache entries", nav: cache_nav(:entries)) do %>
-  <%= render SolidWebUi::Ui::TableComponent.new(headers: [ "ID", "Key", "Size", "Created" ], empty_message: "The cache is empty.") do %>
+<%= swui_page(title: "Cache entries", nav: cache_nav(:entries)) do %>
+  <%= swui_table(headers: [ "ID", "Key", "Size", "Created" ], empty_message: "The cache is empty.") do %>
     <% @entries.each do |entry| %>
       <tr>
         <td><%= entry.id %></td>
@@ -11,5 +11,5 @@
     <% end %>
   <% end %>
 
-  <%= render SolidWebUi::Ui::PaginatorComponent.new(paginator: @paginator, page_url: ->(page) { entries_path(page: page) }) %>
+  <%= swui_paginator(paginator: @paginator, page_url: ->(page) { entries_path(page: page) }) %>
 <% end %>
