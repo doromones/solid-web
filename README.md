@@ -1,5 +1,10 @@
 # solid_web_ui
 
+[![Gem Version](https://img.shields.io/gem/v/solid_web_ui)](https://rubygems.org/gems/solid_web_ui)
+[![Downloads](https://img.shields.io/gem/dt/solid_web_ui)](https://rubygems.org/gems/solid_web_ui)
+[![CI](https://github.com/doromones/solid-web/actions/workflows/ci.yml/badge.svg)](https://github.com/doromones/solid-web/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
+
 Web dashboards for Rails' **Solid Queue**, **Solid Cache** and **Solid Cable** — one gem
 (`solid_web_ui`) with three independently mountable Rails engines sharing one design system.
 
