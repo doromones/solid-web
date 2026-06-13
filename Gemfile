@@ -1,9 +1,7 @@
 source "https://rubygems.org"
 
-# The four gems of this monorepo, wired locally via path.
-%w[solid_web_ui solid_queue_web solid_cache_web solid_cable_web].each do |gem_name|
-  gem gem_name, path: "gems/#{gem_name}"
-end
+# The gem itself (runtime deps come from solid_web_ui.gemspec).
+gemspec
 
 # Test database for the dummy app (decoupled from any host DB choice).
 gem "sqlite3", ">= 2.0"

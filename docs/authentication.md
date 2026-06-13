@@ -12,9 +12,9 @@ auth and the dashboards inherit it:
 
 ```ruby
 # config/initializers/solid_web.rb
-SolidQueueWeb.config.base_controller_class = "Admin::BaseController"
-SolidCacheWeb.config.base_controller_class = "Admin::BaseController"
-SolidCableWeb.config.base_controller_class = "Admin::BaseController"
+SolidWebUi::Queue.config.base_controller_class = "Admin::BaseController"
+SolidWebUi::Cache.config.base_controller_class = "Admin::BaseController"
+SolidWebUi::Cable.config.base_controller_class = "Admin::BaseController"
 ```
 
 ```ruby
@@ -32,7 +32,7 @@ initializer is the right place to set it.
 
 ```ruby
 # config/initializers/solid_web.rb
-%w[SolidQueueWeb SolidCacheWeb SolidCableWeb].each do |engine|
+%w[SolidWebUi::Queue SolidWebUi::Cache SolidWebUi::Cable].each do |engine|
   engine.constantize.config.base_controller_class = "Admin::DashboardController"
 end
 ```
@@ -51,9 +51,9 @@ controller:
 
 ```ruby
 authenticate :user, ->(u) { u.admin? } do
-  mount SolidQueueWeb::Engine => "/admin/solid_queue"
-  mount SolidCacheWeb::Engine => "/admin/solid_cache"
-  mount SolidCableWeb::Engine => "/admin/solid_cable"
+  mount SolidWebUi::Queue::Engine => "/admin/solid_queue"
+  mount SolidWebUi::Cache::Engine => "/admin/solid_cache"
+  mount SolidWebUi::Cable::Engine => "/admin/solid_cable"
 end
 ```
 

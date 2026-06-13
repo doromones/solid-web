@@ -18,7 +18,7 @@ Dir[File.expand_path("support/**/*.rb", __dir__)].each { |f| require f }
 
 # ViewComponent previews live under spec/ (not autoloaded) — load them so they
 # register with ViewComponent::Preview and can be rendered/tested.
-Dir[File.expand_path("../gems/*/spec/components/previews/**/*_preview.rb", __dir__)].each { |f| require f }
+Dir[File.expand_path("solid_web_ui/components/previews/**/*_preview.rb", __dir__)].each { |f| require f }
 
 RSpec.configure do |config|
   config.use_transactional_fixtures = true

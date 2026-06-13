@@ -6,6 +6,6 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 INPUT="tailwind/application.css"
-OUTPUT="gems/solid_web_ui/app/assets/stylesheets/solid_web_ui.css"
+OUTPUT="app/assets/stylesheets/solid_web_ui.css"
 
 exec bundle exec tailwindcss --input "$INPUT" --output "$OUTPUT" "$@"

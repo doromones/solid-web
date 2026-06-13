@@ -10,9 +10,9 @@ RSpec.describe "monorepo scaffold" do
 
   it "loads the four gems" do
     expect(defined?(SolidWebUi::VERSION)).to be_truthy
-    expect(defined?(SolidQueueWeb::Engine)).to be_truthy
-    expect(defined?(SolidCacheWeb::Engine)).to be_truthy
-    expect(defined?(SolidCableWeb::Engine)).to be_truthy
+    expect(defined?(SolidWebUi::Queue::Engine)).to be_truthy
+    expect(defined?(SolidWebUi::Cache::Engine)).to be_truthy
+    expect(defined?(SolidWebUi::Cable::Engine)).to be_truthy
   end
 
   it "has the Solid Queue / Cache / Cable tables in the test database" do

@@ -2,6 +2,6 @@
 
 # Host wiring for the three dashboards. Runs at boot, before any request, so the
 # engines' ApplicationControllers resolve their parent from these values.
-SolidQueueWeb.config.base_controller_class = "Admin::BaseController"
-SolidCacheWeb.config.base_controller_class = "Admin::BaseController"
-SolidCableWeb.config.base_controller_class = "Admin::BaseController"
+SolidWebUi::Queue.config.base_controller_class = "Admin::BaseController"
+SolidWebUi::Cache.config.base_controller_class = "Admin::BaseController"
+SolidWebUi::Cable.config.base_controller_class = "Admin::BaseController"

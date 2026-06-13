@@ -1,27 +1,49 @@
-# solid-web
+# solid_web_ui
 
-Web dashboards for Rails' **Solid Queue**, **Solid Cache** and **Solid Cable**, packaged as three
-independent mountable engine gems plus a shared design gem.
+Web dashboards for Rails' **Solid Queue**, **Solid Cache** and **Solid Cable** — one gem
+(`solid_web_ui`) with three independently mountable Rails engines sharing one design system.
 
-| Gem | What it does |
-|-----|--------------|
-| [`solid_web_ui`](gems/solid_web_ui) | Shared base: layout, ViewComponents, design tokens / theming, dry-configurable base, precompiled Tailwind CSS. The other three depend on it. |
-| [`solid_queue_web`](gems/solid_queue_web) | Dashboard for Solid Queue: jobs, queues, failed executions, processes, recurring tasks. |
-| [`solid_cache_web`](gems/solid_cache_web) | Dashboard for Solid Cache: entries, size statistics, maintenance. |
-| [`solid_cable_web`](gems/solid_cable_web) | Dashboard for Solid Cable: channel activity, message volume, retention. |
+> The repository is named `solid-web`; the gem it ships is `solid_web_ui`.
 
-The three web engines are plain Rails mountable engines — **no ActiveAdmin required**. Host
-authentication is inherited through a configurable `base_controller_class`. They are tied together
-visually by depending on `solid_web_ui`.
+| Engine | Mount | What it does |
+|--------|-------|--------------|
+| `SolidWebUi::Queue::Engine` | `/admin/queue` | Solid Queue: dashboard, queues (pause/resume), jobs by status, failed jobs (retry/discard), processes, recurring tasks. |
+| `SolidWebUi::Cache::Engine` | `/admin/cache` | Solid Cache: entry/size statistics, entry browser, clear. |
+| `SolidWebUi::Cable::Engine` | `/admin/cable` | Solid Cable: message/channel activity, volume, retention trim. |
+
+The shared core (`SolidWebUi`) provides the layout, ViewComponents, design-token theming and a
+dry-configurable base. The engines are plain Rails mountable engines — **no ActiveAdmin required**;
+host authentication is inherited through a configurable `base_controller_class`.
+
+## Install
+
+```ruby
+# Gemfile
+gem "solid_web_ui"
+```
+
+```ruby
+# config/routes.rb — mount only the parts you want
+mount SolidWebUi::Queue::Engine => "/admin/queue"
+mount SolidWebUi::Cache::Engine => "/admin/cache"
+mount SolidWebUi::Cable::Engine => "/admin/cable"
+```
+
+```ruby
+# config/initializers/solid_web_ui.rb — protect the dashboards behind your auth
+SolidWebUi::Queue.config.base_controller_class = "Admin::BaseController"
+SolidWebUi::Cache.config.base_controller_class = "Admin::BaseController"
+SolidWebUi::Cable.config.base_controller_class = "Admin::BaseController"
+```
 
 ## Development
 
-This is a monorepo; the four gems are wired locally via `path:` in the root `Gemfile`, and exercised
-by a single dummy Rails app under `spec/dummy` (SQLite, schema loaded from the Solid* gems).
+A single dummy Rails app under `spec/dummy` (SQLite, schema loaded from the Solid* gems) exercises
+all three engines.
 
 ```bash
 bundle install
-bundle exec rspec        # runs the specs of all four gems
+bundle exec rspec               # full suite
 bundle exec rake assets:build   # rebuild the precompiled Tailwind stylesheet
 ```
 
@@ -30,22 +52,20 @@ bundle exec rake assets:build   # rebuild the precompiled Tailwind stylesheet
 
 ## Releasing
 
-The four gems share a single version. Pushing a version tag builds and releases
-them via [`.github/workflows/release.yml`](.github/workflows/release.yml):
+Pushing a version tag builds and releases the gem via
+[`.github/workflows/release.yml`](.github/workflows/release.yml):
 
 ```bash
 git tag v0.1.0
 git push origin v0.1.0
 ```
 
-The workflow builds the four `.gem` files, attaches them to a GitHub Release, and
-publishes them to RubyGems via **OIDC Trusted Publishing** (no API key / secret —
-MFA-compatible), `solid_web_ui` first as the others depend on it.
+The workflow builds `solid_web_ui.gem`, attaches it to a GitHub Release, and publishes it to RubyGems
+via **OIDC Trusted Publishing** (no API key / secret — MFA-compatible).
 
-One-time setup on [rubygems.org](https://rubygems.org): register a trusted publisher
-for **each** gem name (repo `doromones/solid-web`, workflow `release.yml`). For
-gems not yet published, use a *pending* trusted publisher
-(`https://rubygems.org/profile/oidc/pending_trusted_publishers/new`).
+One-time setup on [rubygems.org](https://rubygems.org): register a trusted publisher for `solid_web_ui`
+(repo `doromones/solid-web`, workflow `release.yml`). Before the first release use a *pending* trusted
+publisher (`https://rubygems.org/profile/oidc/pending_trusted_publishers/new`).
 
 ## Documentation
 

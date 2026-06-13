@@ -18,10 +18,7 @@
 @import "tailwindcss/utilities.css" layer(utilities);
 
 /* Scan engine markup so any Tailwind utility used in views is generated. */
-@source "../gems/solid_web_ui/app";
-@source "../gems/solid_queue_web/app";
-@source "../gems/solid_cache_web/app";
-@source "../gems/solid_cable_web/app";
+@source "../app";
 
 @layer components {
   .solid-web-ui {

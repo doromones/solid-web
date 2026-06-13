@@ -1,21 +1,21 @@
 # Configuration
 
-Every gem is configured with [dry-configurable](https://dry-rb.org/gems/dry-configurable).
-Set values in an initializer in your host app, e.g. `config/initializers/solid_web.rb`:
+Each mountable part is configured with [dry-configurable](https://dry-rb.org/gems/dry-configurable).
+Set values in an initializer in your host app, e.g. `config/initializers/solid_web_ui.rb`:
 
 ```ruby
-SolidQueueWeb.config.base_controller_class = "Admin::BaseController"
-SolidQueueWeb.config.per_page = 50
-SolidQueueWeb.config.enable_discard = false
+SolidWebUi::Queue.config.base_controller_class = "Admin::BaseController"
+SolidWebUi::Queue.config.per_page = 50
+SolidWebUi::Queue.config.enable_discard = false
 
-SolidCacheWeb.config.base_controller_class = "Admin::BaseController"
-SolidCableWeb.config.base_controller_class = "Admin::BaseController"
+SolidWebUi::Cache.config.base_controller_class = "Admin::BaseController"
+SolidWebUi::Cable.config.base_controller_class = "Admin::BaseController"
 ```
 
 ## Shared base settings
 
 These come from `SolidWebUi::Configurable` and exist on **all three** web engines
-(`SolidQueueWeb`, `SolidCacheWeb`, `SolidCableWeb`):
+(`SolidWebUi::Queue`, `SolidWebUi::Cache`, `SolidWebUi::Cable`):
 
 | Setting | Type | Default | Purpose |
 |---------|------|---------|---------|
@@ -24,7 +24,7 @@ These come from `SolidWebUi::Configurable` and exist on **all three** web engine
 | `time_zone` | String | `"UTC"` | Time zone used to render timestamps. |
 | `page_title` | String | engine-specific | Heading shown at the top of the dashboard. |
 
-## `SolidQueueWeb`
+## `SolidWebUi::Queue`
 
 | Setting | Type | Default | Purpose |
 |---------|------|---------|---------|
@@ -33,14 +33,14 @@ These come from `SolidWebUi::Configurable` and exist on **all three** web engine
 | `enable_discard` | Boolean | `true` | Allow discarding failed jobs. |
 | `enable_pause` | Boolean | `true` | Allow pausing/resuming queues. |
 
-## `SolidCacheWeb`
+## `SolidWebUi::Cache`
 
 | Setting | Type | Default | Purpose |
 |---------|------|---------|---------|
 | `page_title` | String | `"Solid Cache"` | Dashboard title. |
 | `enable_clear` | Boolean | `true` | Allow clearing the whole cache. When `false`, the clear endpoint returns `403`. |
 
-## `SolidCableWeb`
+## `SolidWebUi::Cable`
 
 | Setting | Type | Default | Purpose |
 |---------|------|---------|---------|

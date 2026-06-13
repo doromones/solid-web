@@ -1,0 +1,26 @@
+<% content_for :title, "Failed jobs" %>
+<%= swui_page(title: "Failed jobs", nav: queue_nav(:failed)) do %>
+  <%= swui_table(headers: [ "ID", "Job", "Queue", "Exception", "Message", "Failed at", "" ], empty_message: "No failed jobs. 🎉") do %>
+    <% @failed.each do |failed| %>
+      <tr>
+        <td><%= failed.id %></td>
+        <td><%= failed.job.class_name %></td>
+        <td><%= failed.job.queue_name %></td>
+        <td><%= swui_status_badge(label: failed.exception_class.to_s, status: :failed) %></td>
+        <td><%= truncate(failed.message.to_s, length: 80) %></td>
+        <td><%= short_time(failed.created_at) %></td>
+        <td>
+          <% if SolidWebUi::Queue.config.enable_retry %>
+            <%= button_to "Retry", retry_failed_execution_path(failed), class: "swui-btn" %>
+          <% end %>
+          <% if SolidWebUi::Queue.config.enable_discard %>
+            <%= button_to "Discard", failed_execution_path(failed), method: :delete, class: "swui-btn swui-btn--danger",
+                          form: { data: { turbo_confirm: "Discard this job permanently?" } } %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  <% end %>
+
+  <%= swui_paginator(paginator: @paginator, page_url: ->(page) { failed_executions_path(page: page) }) %>
+<% end %>

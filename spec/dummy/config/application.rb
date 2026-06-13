@@ -10,11 +10,8 @@ require "propshaft"
 
 Bundler.require(*Rails.groups)
 
-# The four gems under test (also required by Bundler.require, listed here for clarity/order).
+# The gem under test (loads the shared core + the three mountable parts).
 require "solid_web_ui"
-require "solid_queue_web"
-require "solid_cache_web"
-require "solid_cable_web"
 
 module Dummy
   class Application < Rails::Application
