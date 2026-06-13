@@ -1,0 +1,11 @@
+<% if href %>
+  <%= link_to href, class: css_classes do %>
+    <span class="swui-card__label"><%= label %></span>
+    <span class="swui-card__value"><%= value %></span>
+  <% end %>
+<% else %>
+  <div class="<%= css_classes %>">
+    <span class="swui-card__label"><%= label %></span>
+    <span class="swui-card__value"><%= value %></span>
+  </div>
+<% end %>

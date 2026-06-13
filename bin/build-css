@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+# Precompile the shared Tailwind 4 stylesheet into solid_web_ui's assets.
+# The committed output is what ships with the gem — hosts never run Tailwind.
+set -euo pipefail
+
+cd "$(dirname "$0")/.."
+
+INPUT="tailwind/application.css"
+OUTPUT="gems/solid_web_ui/app/assets/stylesheets/solid_web_ui.css"
+
+exec bundle exec tailwindcss --input "$INPUT" --output "$OUTPUT" "$@"

@@ -1,0 +1,18 @@
+<table class="swui-table">
+  <thead>
+    <tr>
+      <% headers.each do |header| %>
+        <th scope="col"><%= header %></th>
+      <% end %>
+    </tr>
+  </thead>
+  <tbody>
+    <% if content.present? %>
+      <%= content %>
+    <% else %>
+      <tr class="swui-table__empty">
+        <td colspan="<%= headers.size %>"><%= empty_message %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>

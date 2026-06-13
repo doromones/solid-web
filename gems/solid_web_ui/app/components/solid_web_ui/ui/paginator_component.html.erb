@@ -1,0 +1,21 @@
+<nav class="swui-pagination" aria-label="Pagination">
+  <% if paginator.prev_page %>
+    <%= link_to "‹ Prev", page_url.call(paginator.prev_page), class: "swui-pagination__item" %>
+  <% else %>
+    <span class="swui-pagination__item swui-pagination__item--disabled">‹ Prev</span>
+  <% end %>
+
+  <% (1..paginator.total_pages).each do |number| %>
+    <% if number == paginator.current_page %>
+      <span class="swui-pagination__item swui-pagination__item--current" aria-current="page"><%= number %></span>
+    <% else %>
+      <%= link_to number, page_url.call(number), class: "swui-pagination__item" %>
+    <% end %>
+  <% end %>
+
+  <% if paginator.next_page %>
+    <%= link_to "Next ›", page_url.call(paginator.next_page), class: "swui-pagination__item" %>
+  <% else %>
+    <span class="swui-pagination__item swui-pagination__item--disabled">Next ›</span>
+  <% end %>
+</nav>
