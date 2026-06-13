@@ -38,9 +38,14 @@ git tag v0.1.0
 git push origin v0.1.0
 ```
 
-The workflow builds the four `.gem` files, attaches them to a GitHub Release, and —
-if a `RUBYGEMS_API_KEY` repository secret is set — publishes them to RubyGems
-(`solid_web_ui` first, as the others depend on it).
+The workflow builds the four `.gem` files, attaches them to a GitHub Release, and
+publishes them to RubyGems via **OIDC Trusted Publishing** (no API key / secret —
+MFA-compatible), `solid_web_ui` first as the others depend on it.
+
+One-time setup on [rubygems.org](https://rubygems.org): register a trusted publisher
+for **each** gem name (repo `doromones/solid-web`, workflow `release.yml`). For
+gems not yet published, use a *pending* trusted publisher
+(`https://rubygems.org/profile/oidc/pending_trusted_publishers/new`).
 
 ## Documentation
 

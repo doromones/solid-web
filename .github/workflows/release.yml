@@ -1,22 +1,25 @@
 name: Release gems
 
 # Builds the four gems whenever a version tag (e.g. v0.1.0) is pushed, attaches
-# the .gem files to a GitHub Release, and — if a RUBYGEMS_API_KEY secret is
-# configured — publishes them to RubyGems (solid_web_ui first, since the others
-# depend on it).
+# the .gem files to a GitHub Release, and publishes them to RubyGems via OIDC
+# Trusted Publishing (no API key / no secret, MFA-compatible). solid_web_ui is
+# pushed first, since the others depend on it.
+#
+# Setup (once, on rubygems.org): register a trusted publisher for EACH gem name
+# (GitHub repo doromones/solid-web, workflow release.yml). For unpublished gems
+# use a "pending" trusted publisher.
 on:
   push:
     tags:
       - "v*"
 
 permissions:
-  contents: write
+  contents: write   # create the GitHub Release
+  id-token: write   # OIDC token for RubyGems trusted publishing
 
 jobs:
   release:
     runs-on: ubuntu-latest
-    env:
-      GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
     steps:
       - uses: actions/checkout@v4
 
@@ -37,8 +40,10 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release create "${GITHUB_REF_NAME}" pkg/*.gem --title "${GITHUB_REF_NAME}" --generate-notes
 
+      - name: Configure RubyGems trusted publishing
+        uses: rubygems/configure-trusted-publisher@v1
+
       - name: Publish to RubyGems
-        if: ${{ env.GEM_HOST_API_KEY != '' }}
         run: |
           for gem in solid_web_ui solid_queue_web solid_cache_web solid_cable_web; do
             gem push "pkg/$gem.gem"
