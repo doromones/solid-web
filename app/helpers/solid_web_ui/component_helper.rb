@@ -23,6 +23,11 @@ module SolidWebUi
       render(Ui::StatusBadgeComponent.new(label: label, status: status))
     end
 
+    def swui_action_button(label:, url:, method: :post, danger: false, confirm: nil)
+      render(Ui::ActionButtonComponent.new(label: label, url: url, method: method,
+                                           danger: danger, confirm: confirm))
+    end
+
     def swui_table(headers:, empty_message: "Nothing to show.", &block)
       render(Ui::TableComponent.new(headers: headers, empty_message: empty_message), &block)
     end

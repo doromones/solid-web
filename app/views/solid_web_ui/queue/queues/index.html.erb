@@ -13,11 +13,9 @@
         <td>
           <% if SolidWebUi::Queue.config.enable_pause %>
             <% if queue.paused? %>
-              <%= button_to "Resume", resume_queue_path(queue.name), class: "swui-btn",
-                            form: { data: { turbo_frame: "_top" } } %>
+              <%= swui_action_button(label: "Resume", url: resume_queue_path(queue.name)) %>
             <% else %>
-              <%= button_to "Pause", pause_queue_path(queue.name), class: "swui-btn",
-                            form: { data: { turbo_frame: "_top" } } %>
+              <%= swui_action_button(label: "Pause", url: pause_queue_path(queue.name)) %>
             <% end %>
           <% end %>
         </td>
