@@ -2,7 +2,7 @@
 
 module SolidWebUi::Cache
   class ApplicationController < SolidWebUi.resolve_base_controller(SolidWebUi::Cache.config.base_controller_class)
-    layout "solid_web_ui"
+    layout -> { SolidWebUi::Cache.config.layout }
     helper SolidWebUi::ComponentHelper
 
     private

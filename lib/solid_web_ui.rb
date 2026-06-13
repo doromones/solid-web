@@ -6,6 +6,7 @@ require "solid_web_ui/version"
 require "solid_web_ui/configurable"
 require "solid_web_ui/theme"
 require "solid_web_ui/paginator"
+require "solid_web_ui/head_helper"
 require "solid_web_ui/engine"
 
 module SolidWebUi

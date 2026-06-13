@@ -15,6 +15,12 @@ module SolidWebUi
       base.setting :per_page, default: 25
       base.setting :time_zone, default: "UTC"
       base.setting :page_title, default: base.respond_to?(:name) ? base.name : "Solid Web"
+      # Which layout the dashboards render in. Default is the gem's standalone,
+      # full-page layout. Point it at a host layout (e.g. "admin") to render the
+      # dashboards inside the host's chrome (sidebar/header). The host layout must
+      # then include `<%= solid_web_ui_head_tags %>` and reference its own routes
+      # via `main_app.` (so they resolve from the isolated engine's context).
+      base.setting :layout, default: "solid_web_ui"
     end
   end
 end

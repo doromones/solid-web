@@ -5,7 +5,7 @@ module SolidWebUi::Queue
   # so host authentication/authorization applies. Resolved lazily at autoload
   # time, after host initializers have set `base_controller_class`.
   class ApplicationController < SolidWebUi.resolve_base_controller(SolidWebUi::Queue.config.base_controller_class)
-    layout "solid_web_ui"
+    layout -> { SolidWebUi::Queue.config.layout }
     helper SolidWebUi::ComponentHelper
 
     private

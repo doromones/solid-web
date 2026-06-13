@@ -2,7 +2,7 @@
 
 module SolidWebUi::Cable
   class ApplicationController < SolidWebUi.resolve_base_controller(SolidWebUi::Cable.config.base_controller_class)
-    layout "solid_web_ui"
+    layout -> { SolidWebUi::Cable.config.layout }
     helper SolidWebUi::ComponentHelper
 
     private

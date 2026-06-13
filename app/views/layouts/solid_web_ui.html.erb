@@ -5,29 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title><%= content_for?(:title) ? yield(:title) : "Solid Web" %></title>
   <%= csrf_meta_tags %>
-
-  <% if SolidWebUi.config.stylesheet %>
-    <%= stylesheet_link_tag "solid_web_ui", "data-turbo-track": "reload" %>
-  <% end %>
-  <% Array(SolidWebUi.config.extra_stylesheets).each do |sheet| %>
-    <%= stylesheet_link_tag sheet, "data-turbo-track": "reload" %>
-  <% end %>
-
-  <%# Theme tokens (host re-themes by overriding these values, never the stylesheet). %>
-  <style>
-    .solid-web-ui { <%= SolidWebUi::Theme.css_vars(SolidWebUi.config.theme).html_safe %> }
-    <% if SolidWebUi.config.color_scheme.to_s == "dark" %>
-      .solid-web-ui { <%= SolidWebUi::Theme.dark_css_vars(SolidWebUi.config.theme).html_safe %> }
-    <% elsif SolidWebUi.config.color_scheme.to_s == "auto" %>
-      @media (prefers-color-scheme: dark) {
-        .solid-web-ui { <%= SolidWebUi::Theme.dark_css_vars(SolidWebUi.config.theme).html_safe %> }
-      }
-    <% end %>
-  </style>
+  <%= solid_web_ui_head_tags %>
 </head>
 <body>
-  <div class="solid-web-ui" data-color-scheme="<%= SolidWebUi.config.color_scheme %>">
-    <%= yield %>
-  </div>
+  <%= yield %>
 </body>
 </html>

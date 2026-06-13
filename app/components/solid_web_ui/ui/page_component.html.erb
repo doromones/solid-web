@@ -1,15 +1,19 @@
-<div class="swui-page">
-  <header class="swui-page__header">
-    <h1 class="swui-page__title"><%= title %></h1>
-    <% if nav.any? %>
-      <nav class="swui-nav">
-        <% nav.each do |item| %>
-          <%= link_to item[:label], item[:href], class: nav_link_class(item) %>
-        <% end %>
-      </nav>
-    <% end %>
-  </header>
-  <main class="swui-page__body">
-    <%= content %>
-  </main>
+<%# Self-scoping under .solid-web-ui so the dashboard is themed correctly whether %>
+<%# it renders in the gem's standalone layout or inside a host layout. %>
+<div class="solid-web-ui" data-color-scheme="<%= SolidWebUi.config.color_scheme %>">
+  <div class="swui-page">
+    <header class="swui-page__header">
+      <h1 class="swui-page__title"><%= title %></h1>
+      <% if nav.any? %>
+        <nav class="swui-nav">
+          <% nav.each do |item| %>
+            <%= link_to item[:label], item[:href], class: nav_link_class(item) %>
+          <% end %>
+        </nav>
+      <% end %>
+    </header>
+    <main class="swui-page__body">
+      <%= content %>
+    </main>
+  </div>
 </div>

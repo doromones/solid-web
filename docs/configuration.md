@@ -23,6 +23,7 @@ These come from `SolidWebUi::Configurable` and exist on **all three** web engine
 | `per_page` | Integer | `25` | Page size for paginated lists. |
 | `time_zone` | String | `"UTC"` | Time zone used to render timestamps. |
 | `page_title` | String | engine-specific | Heading shown at the top of the dashboard. |
+| `layout` | String | `"solid_web_ui"` | Layout the dashboard renders in. Set to a host layout (e.g. `"admin"`) to embed the dashboard inside the host chrome — see [Embedding](#embedding-in-a-host-layout). |
 
 ## `SolidWebUi::Queue`
 
@@ -47,6 +48,37 @@ These come from `SolidWebUi::Configurable` and exist on **all three** web engine
 | `page_title` | String | `"Solid Cable"` | Dashboard title. |
 | `enable_trim` | Boolean | `true` | Allow trimming old messages. When `false`, the trim endpoint returns `403`. |
 | `retention` | Duration | `1.day` | Messages older than this are considered trimmable. |
+
+## Embedding in a host layout
+
+By default each dashboard renders in its own full-page layout. To render it **inside
+your app's chrome** (sidebar, header, …), point `layout` at one of your layouts:
+
+```ruby
+SolidWebUi::Queue.config.layout = "admin"
+SolidWebUi::Cache.config.layout = "admin"
+SolidWebUi::Cable.config.layout = "admin"
+```
+
+Two requirements on that host layout:
+
+1. Add the dashboards' assets to its `<head>`:
+
+   ```erb
+   <%= solid_web_ui_head_tags %>
+   ```
+
+   (Available app-wide — it links the bundled stylesheet and emits the theme tokens.)
+
+2. Reference the host's **own** routes via `main_app.` (the dashboards are isolated
+   engines, so unqualified app route helpers don't resolve from their context):
+
+   ```erb
+   <%= link_to "Home", main_app.root_path %>
+   ```
+
+The dashboard content is self-scoped under `.solid-web-ui`, so its styling never
+leaks into the rest of the host layout.
 
 ## Theming settings
 
