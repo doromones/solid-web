@@ -28,6 +28,20 @@ bundle exec rake assets:build   # rebuild the precompiled Tailwind stylesheet
 > Requires the Ruby pinned for this workspace. In a non-interactive shell use mise:
 > `mise exec -- bundle exec rspec`.
 
+## Releasing
+
+The four gems share a single version. Pushing a version tag builds and releases
+them via [`.github/workflows/release.yml`](.github/workflows/release.yml):
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+The workflow builds the four `.gem` files, attaches them to a GitHub Release, and —
+if a `RUBYGEMS_API_KEY` repository secret is set — publishes them to RubyGems
+(`solid_web_ui` first, as the others depend on it).
+
 ## Documentation
 
 - [Configuration reference](docs/configuration.md)

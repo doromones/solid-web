@@ -1,0 +1,45 @@
+name: Release gems
+
+# Builds the four gems whenever a version tag (e.g. v0.1.0) is pushed, attaches
+# the .gem files to a GitHub Release, and — if a RUBYGEMS_API_KEY secret is
+# configured — publishes them to RubyGems (solid_web_ui first, since the others
+# depend on it).
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: "3.4"
+
+      - name: Build gems
+        run: |
+          mkdir -p pkg
+          for gem in solid_web_ui solid_queue_web solid_cache_web solid_cable_web; do
+            (cd "gems/$gem" && gem build "$gem.gemspec" -o "$GITHUB_WORKSPACE/pkg/$gem.gem")
+          done
+          ls -l pkg
+
+      - name: Create GitHub release with the gems attached
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create "${GITHUB_REF_NAME}" pkg/*.gem --title "${GITHUB_REF_NAME}" --generate-notes
+
+      - name: Publish to RubyGems
+        if: ${{ env.GEM_HOST_API_KEY != '' }}
+        run: |
+          for gem in solid_web_ui solid_queue_web solid_cache_web solid_cable_web; do
+            gem push "pkg/$gem.gem"
+          done
