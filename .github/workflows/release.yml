@@ -37,8 +37,8 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release create "${GITHUB_REF_NAME}" pkg/*.gem --title "${GITHUB_REF_NAME}" --generate-notes
 
-      - name: Configure RubyGems trusted publishing
-        uses: rubygems/configure-trusted-publisher@v1
+      - name: Configure RubyGems credentials (OIDC trusted publishing)
+        uses: rubygems/configure-rubygems-credentials@v2.1.0
 
       - name: Publish to RubyGems
         run: gem push pkg/solid_web_ui.gem
