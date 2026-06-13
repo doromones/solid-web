@@ -15,20 +15,23 @@
   function reloadFrame(frameId) {
     var frame = document.getElementById(frameId);
     if (!frame) return;
-    var here = window.location.href;
     if (typeof frame.reload === "function") {
-      // Real <turbo-frame>: point it at the current URL and reload (morphs when
-      // the frame carries refresh="morph"). Setting src to a new value triggers a
-      // fetch on its own; reload() forces one when the value is unchanged.
-      if (frame.getAttribute("src") !== here) {
-        frame.setAttribute("src", here);
-      } else {
+      // Real <turbo-frame>: reload its OWN current src, which Turbo keeps in sync
+      // as the user navigates within the frame (stat cards, filter tabs, pages) —
+      // so a refresh re-fetches the view on screen, never snapping back to the
+      // page first loaded. Morphs in place when the frame carries refresh="morph".
+      // First refresh on a page with no src yet: seed it from the current URL.
+      if (frame.getAttribute("src")) {
         frame.reload();
+      } else {
+        frame.setAttribute("src", window.location.href);
       }
       return;
     }
-    // Fallback (no Turbo): fetch the page and swap the frame's contents.
-    fetch(here, { headers: { "X-Requested-With": "XMLHttpRequest" }, credentials: "same-origin" })
+    // Fallback (no Turbo): frames are inert, so in-frame links navigate the whole
+    // page — the frame's current URL is just the document's. Fetch and swap.
+    var url = frame.getAttribute("src") || window.location.href;
+    fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" }, credentials: "same-origin" })
       .then(function (r) { return r.text(); })
       .then(function (html) {
         var doc = new DOMParser().parseFromString(html, "text/html");

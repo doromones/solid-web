@@ -23,8 +23,11 @@
       <% if refresh? %>
         <%# The body is reloaded in place by the bundled JS (morph when Turbo is %>
         <%# present). No src here: JS sets it at refresh time to avoid a redundant %>
-        <%# fetch on initial load. %>
-        <turbo-frame id="<%= SolidWebUi::Ui::PageComponent::FRAME_ID %>" refresh="morph">
+        <%# fetch on initial load. data-turbo-action="advance" promotes in-frame %>
+        <%# navigations (stat cards, filter tabs, pagination) to update the URL, so %>
+        <%# the address bar tracks the current view and auto-refresh/reload target %>
+        <%# it instead of snapping back to the dashboard. %>
+        <turbo-frame id="<%= SolidWebUi::Ui::PageComponent::FRAME_ID %>" refresh="morph" data-turbo-action="advance">
           <%= content %>
         </turbo-frame>
       <% else %>

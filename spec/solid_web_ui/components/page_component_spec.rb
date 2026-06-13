@@ -22,7 +22,7 @@ RSpec.describe SolidWebUi::Ui::PageComponent, type: :component do
   it "wraps the body in a refreshable turbo-frame and shows the controls by default" do
     render_inline(described_class.new(title: "Dashboard")) { "body content" }
 
-    expect(page).to have_css("turbo-frame#swui-refresh-frame[refresh='morph']", text: "body content")
+    expect(page).to have_css("turbo-frame#swui-refresh-frame[refresh='morph'][data-turbo-action='advance']", text: "body content")
     expect(page).to have_css(".swui-refresh select[data-swui-refresh-select]")
   end
 
