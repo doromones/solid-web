@@ -1,0 +1,23 @@
+<% content_for :title, "Jobs" %>
+<%= render SolidWebUi::Ui::PageComponent.new(title: "Jobs", nav: queue_nav(:jobs)) do %>
+  <nav class="swui-nav" style="margin-bottom: 1rem;">
+    <% %w[all ready scheduled in_progress blocked finished failed].each do |status| %>
+      <%= link_to status.humanize, jobs_path(status: status),
+                  class: "swui-nav__link #{'swui-nav__link--active' if @status == status}" %>
+    <% end %>
+  </nav>
+
+  <%= render SolidWebUi::Ui::TableComponent.new(headers: [ "ID", "Job", "Queue", "Status", "Created" ], empty_message: "No jobs.") do %>
+    <% @jobs.each do |job| %>
+      <tr>
+        <td><%= job.id %></td>
+        <td><%= job.class_name %></td>
+        <td><%= job.queue_name %></td>
+        <td><%= render SolidWebUi::Ui::StatusBadgeComponent.new(label: job_status(job).to_s.humanize, status: job_status(job)) %></td>
+        <td><%= short_time(job.created_at) %></td>
+      </tr>
+    <% end %>
+  <% end %>
+
+  <%= render SolidWebUi::Ui::PaginatorComponent.new(paginator: @paginator, page_url: ->(page) { jobs_path(status: @status, page: page) }) %>
+<% end %>

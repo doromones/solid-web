@@ -1,0 +1,25 @@
+<% content_for :title, "Queues" %>
+<%= render SolidWebUi::Ui::PageComponent.new(title: "Queues", nav: queue_nav(:queues)) do %>
+  <%= render SolidWebUi::Ui::TableComponent.new(headers: [ "Queue", "Size", "Latency", "Status", "" ], empty_message: "No queues with activity.") do %>
+    <% @queues.each do |queue| %>
+      <tr>
+        <td><%= queue.name %></td>
+        <td><%= queue.size %></td>
+        <td><%= queue_latency(queue) %></td>
+        <td>
+          <%= render SolidWebUi::Ui::StatusBadgeComponent.new(label: queue.paused? ? "paused" : "active",
+                                                              status: queue.paused? ? :paused : :ready) %>
+        </td>
+        <td>
+          <% if SolidQueueWeb.config.enable_pause %>
+            <% if queue.paused? %>
+              <%= button_to "Resume", resume_queue_path(queue.name), class: "swui-btn" %>
+            <% else %>
+              <%= button_to "Pause", pause_queue_path(queue.name), class: "swui-btn" %>
+            <% end %>
+          <% end %>
+        </td>
+      </tr>
+    <% end %>
+  <% end %>
+<% end %>

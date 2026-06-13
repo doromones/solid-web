@@ -1,0 +1,13 @@
+<% content_for :title, "#{SolidQueueWeb.config.page_title} · Dashboard" %>
+<%= render SolidWebUi::Ui::PageComponent.new(title: SolidQueueWeb.config.page_title, nav: queue_nav(:dashboard)) do %>
+  <div class="swui-grid">
+    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "Ready", value: @counts[:ready], tone: :primary, href: jobs_path(status: "ready")) %>
+    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "Scheduled", value: @counts[:scheduled], href: jobs_path(status: "scheduled")) %>
+    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "In progress", value: @counts[:in_progress], href: jobs_path(status: "in_progress")) %>
+    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "Blocked", value: @counts[:blocked], tone: :warning, href: jobs_path(status: "blocked")) %>
+    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "Failed", value: @counts[:failed], tone: :danger, href: failed_executions_path) %>
+    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "Finished", value: @counts[:finished], tone: :success, href: jobs_path(status: "finished")) %>
+    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "Queues", value: @queue_count, href: queues_path) %>
+    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "Processes", value: @process_count, href: processes_path) %>
+  </div>
+<% end %>
