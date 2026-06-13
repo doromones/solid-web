@@ -1,0 +1,3 @@
+--require spec_helper
+--format documentation
+--pattern "{spec,gems/*/spec}/**/*_spec.rb"

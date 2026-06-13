@@ -1,0 +1,13 @@
+*.gem
+*.rbc
+/.bundle/
+/tmp/
+/log/
+/spec/dummy/log/*
+/spec/dummy/tmp/*
+/spec/dummy/storage/*
+.rspec_status
+node_modules/
+/tailwind/.cache/
+.idea/
+.DS_Store
