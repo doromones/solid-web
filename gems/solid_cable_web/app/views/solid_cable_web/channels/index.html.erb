@@ -1,0 +1,12 @@
+<% content_for :title, "Channels" %>
+<%= render SolidWebUi::Ui::PageComponent.new(title: "Channels", nav: cable_nav(:channels)) do %>
+  <%= render SolidWebUi::Ui::TableComponent.new(headers: [ "Channel", "Messages", "Last activity" ], empty_message: "No channels.") do %>
+    <% @channels.each do |row| %>
+      <tr>
+        <td><code><%= readable_channel(row[:name]) %></code></td>
+        <td><%= number_with_delimiter(row[:count]) %></td>
+        <td><%= short_time(row[:last]) %></td>
+      </tr>
+    <% end %>
+  <% end %>
+<% end %>

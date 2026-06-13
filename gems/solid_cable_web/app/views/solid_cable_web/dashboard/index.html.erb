@@ -1,0 +1,24 @@
+<% content_for :title, "#{SolidCableWeb.config.page_title} · Dashboard" %>
+<%= render SolidWebUi::Ui::PageComponent.new(title: SolidCableWeb.config.page_title, nav: cable_nav(:dashboard)) do %>
+  <div class="swui-grid">
+    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "Messages", value: number_with_delimiter(@total), tone: :primary) %>
+    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "Channels", value: @channel_count, href: channels_path) %>
+    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "Last hour", value: number_with_delimiter(@last_hour)) %>
+    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "Trimmable", value: number_with_delimiter(@trimmable), tone: @trimmable.positive? ? :warning : :neutral) %>
+  </div>
+
+  <% if SolidCableWeb.config.enable_trim %>
+    <%= button_to "Trim old messages", trim_messages_path, method: :delete, class: "swui-btn swui-btn--danger",
+                  form: { data: { turbo_confirm: "Delete messages older than the retention window?" } } %>
+  <% end %>
+
+  <h2 class="swui-section-title">Top channels</h2>
+  <%= render SolidWebUi::Ui::TableComponent.new(headers: [ "Channel", "Messages" ], empty_message: "No messages broadcast yet.") do %>
+    <% @top_channels.each do |channel, count| %>
+      <tr>
+        <td><code><%= readable_channel(channel) %></code></td>
+        <td><%= number_with_delimiter(count) %></td>
+      </tr>
+    <% end %>
+  <% end %>
+<% end %>
