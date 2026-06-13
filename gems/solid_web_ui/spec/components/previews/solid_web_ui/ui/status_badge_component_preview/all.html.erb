@@ -1,0 +1,5 @@
+<div style="display:flex; gap:.5rem; flex-wrap:wrap;">
+  <% %i[ready scheduled in_progress finished failed blocked paused unknown].each do |status| %>
+    <%= render SolidWebUi::Ui::StatusBadgeComponent.new(label: status.to_s.humanize, status: status) %>
+  <% end %>
+</div>

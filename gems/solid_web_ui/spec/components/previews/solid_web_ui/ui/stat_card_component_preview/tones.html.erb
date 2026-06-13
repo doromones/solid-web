@@ -1,0 +1,5 @@
+<div class="swui-grid">
+  <% %i[neutral primary success warning danger].each do |tone| %>
+    <%= render SolidWebUi::Ui::StatCardComponent.new(label: tone.to_s.titleize, value: rand(1..999), tone: tone) %>
+  <% end %>
+</div>

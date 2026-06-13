@@ -1,0 +1,13 @@
+<%= render SolidWebUi::Ui::PageComponent.new(
+      title: "Solid Queue",
+      nav: [
+        { label: "Dashboard", href: "#", active: true },
+        { label: "Queues", href: "#" },
+        { label: "Jobs", href: "#" },
+        { label: "Failed", href: "#" }
+      ]) do %>
+  <div class="swui-grid">
+    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "Ready", value: 42, tone: :primary) %>
+    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "Failed", value: 3, tone: :danger) %>
+  </div>
+<% end %>

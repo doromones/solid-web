@@ -1,0 +1,8 @@
+<%= render SolidWebUi::Ui::TableComponent.new(headers: [ "ID", "Job", "Queue", "Status" ]) do %>
+  <tr><td>1</td><td>DeliverEmailJob</td><td>mailers</td>
+    <td><%= render SolidWebUi::Ui::StatusBadgeComponent.new(label: "Ready", status: :ready) %></td></tr>
+  <tr><td>2</td><td>ReindexJob</td><td>default</td>
+    <td><%= render SolidWebUi::Ui::StatusBadgeComponent.new(label: "Failed", status: :failed) %></td></tr>
+  <tr><td>3</td><td>BackupJob</td><td>maintenance</td>
+    <td><%= render SolidWebUi::Ui::StatusBadgeComponent.new(label: "Finished", status: :finished) %></td></tr>
+<% end %>
