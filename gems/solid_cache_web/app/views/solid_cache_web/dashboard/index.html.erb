@@ -1,0 +1,15 @@
+<% content_for :title, "#{SolidCacheWeb.config.page_title} · Dashboard" %>
+<%= render SolidWebUi::Ui::PageComponent.new(title: SolidCacheWeb.config.page_title, nav: cache_nav(:dashboard)) do %>
+  <div class="swui-grid">
+    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "Entries", value: number_with_delimiter(@count), tone: :primary, href: entries_path) %>
+    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "Total size", value: number_to_human_size(@total_bytes)) %>
+    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "Avg entry", value: number_to_human_size(@avg_bytes)) %>
+    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "Oldest", value: short_time(@oldest)) %>
+    <%= render SolidWebUi::Ui::StatCardComponent.new(label: "Newest", value: short_time(@newest)) %>
+  </div>
+
+  <% if SolidCacheWeb.config.enable_clear %>
+    <%= button_to "Clear cache", clear_entries_path, method: :delete, class: "swui-btn swui-btn--danger",
+                  form: { data: { turbo_confirm: "Delete ALL cache entries?" } } %>
+  <% end %>
+<% end %>
