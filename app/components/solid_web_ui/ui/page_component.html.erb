@@ -4,23 +4,21 @@
   <div class="swui-page">
     <header class="swui-page__header">
       <h1 class="swui-page__title"><%= title %></h1>
-      <% if nav.any? || refresh? %>
-        <div class="swui-page__actions">
-          <% if nav.any? %>
-            <nav class="swui-nav">
-              <% nav.each do |item| %>
-                <%= link_to item[:label], item[:href], class: nav_link_class(item) %>
-              <% end %>
-            </nav>
+      <% if nav.any? %>
+        <nav class="swui-nav">
+          <% nav.each do |item| %>
+            <%= link_to item[:label], item[:href], class: nav_link_class(item) %>
           <% end %>
-          <% if refresh? %>
-            <%= render(SolidWebUi::Ui::RefreshControlsComponent.new(frame_id: SolidWebUi::Ui::PageComponent::FRAME_ID)) %>
-          <% end %>
-        </div>
+        </nav>
       <% end %>
     </header>
     <main class="swui-page__body">
       <% if refresh? %>
+        <%# Controls sit just above the data region, right-aligned, and OUTSIDE the %>
+        <%# frame so the <select> value and the countdown survive every reload. %>
+        <div class="swui-refresh-bar">
+          <%= render(SolidWebUi::Ui::RefreshControlsComponent.new(frame_id: SolidWebUi::Ui::PageComponent::FRAME_ID)) %>
+        </div>
         <%# The body is reloaded in place by the bundled JS (morph when Turbo is %>
         <%# present). No src here: JS sets it at refresh time to avoid a redundant %>
         <%# fetch on initial load. data-turbo-action="advance" promotes in-frame %>

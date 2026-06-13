@@ -59,14 +59,6 @@
     margin: 0;
   }
 
-  /* Header actions (nav + live-refresh controls) ----------------------- */
-  .solid-web-ui .swui-page__actions {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.75rem;
-  }
-
   /* Nav ---------------------------------------------------------------- */
   .solid-web-ui .swui-nav {
     display: flex;
@@ -75,6 +67,12 @@
   }
 
   /* Live-refresh controls ---------------------------------------------- */
+  .solid-web-ui .swui-refresh-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+  }
+
   .solid-web-ui .swui-refresh {
     display: inline-flex;
     align-items: center;
