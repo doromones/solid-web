@@ -5,8 +5,14 @@ module SolidWebUi
   # read `swui_page(...)` instead of `render SolidWebUi::Ui::PageComponent.new(...)`.
   # Included into each engine's controller via `helper SolidWebUi::ComponentHelper`.
   module ComponentHelper
-    def swui_page(title:, nav: [], &block)
-      render(Ui::PageComponent.new(title: title, nav: nav), &block)
+    def swui_page(title:, nav: [], refresh: true, &block)
+      render(Ui::PageComponent.new(title: title, nav: nav, refresh: refresh), &block)
+    end
+
+    def swui_refresh_controls(frame_id:, default_interval: nil, intervals: nil)
+      render(Ui::RefreshControlsComponent.new(frame_id: frame_id,
+                                              default_interval: default_interval,
+                                              intervals: intervals))
     end
 
     def swui_stat_card(label:, value:, tone: :neutral, href: nil)

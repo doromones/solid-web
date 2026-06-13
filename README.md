@@ -20,6 +20,12 @@ The shared core (`SolidWebUi`) provides the layout, ViewComponents, design-token
 dry-configurable base. The engines are plain Rails mountable engines — **no ActiveAdmin required**;
 host authentication is inherited through a configurable `base_controller_class`.
 
+Every dashboard **auto-refreshes**: a frequency `<select>`, a countdown and a manual refresh
+button in the header keep the stats and tables live without a full reload (the data region is a
+turbo-frame, morphed in place when Turbo is present, otherwise fetched and swapped). Configure or
+disable it via `SolidWebUi.config.refresh_interval` / `refresh_intervals` / `javascript` — see
+[docs/configuration.md](docs/configuration.md#live-auto-refresh).
+
 ## Install
 
 ```ruby

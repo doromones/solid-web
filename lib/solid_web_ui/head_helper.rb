@@ -18,6 +18,9 @@ module SolidWebUi
         tags << stylesheet_link_tag(sheet, "data-turbo-track": "reload")
       end
       tags << solid_web_ui_theme_style_tag
+      if SolidWebUi.config.javascript
+        tags << javascript_include_tag("solid_web_ui", defer: true, "data-turbo-track": "reload")
+      end
       safe_join(tags)
     end
 

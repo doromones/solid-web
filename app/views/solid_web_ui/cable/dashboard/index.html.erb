@@ -9,7 +9,7 @@
 
   <% if SolidWebUi::Cable.config.enable_trim %>
     <%= button_to "Trim old messages", trim_messages_path, method: :delete, class: "swui-btn swui-btn--danger",
-                  form: { data: { turbo_confirm: "Delete messages older than the retention window?" } } %>
+                  form: { data: { turbo_frame: "_top", turbo_confirm: "Delete messages older than the retention window?" } } %>
   <% end %>
 
   <h2 class="swui-section-title">Top channels</h2>

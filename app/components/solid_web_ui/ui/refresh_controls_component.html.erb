@@ -1,0 +1,16 @@
+<div class="swui-refresh"
+     data-swui-refresh
+     data-frame="<%= frame_id %>"
+     data-interval="<%= default_interval %>"
+     data-storage-key="<%= SolidWebUi::Ui::RefreshControlsComponent::STORAGE_KEY %>">
+  <label class="swui-refresh__field">
+    <span class="swui-refresh__label">Auto-refresh</span>
+    <select class="swui-refresh__select" data-swui-refresh-select aria-label="Auto-refresh interval">
+      <% intervals.each do |seconds| %>
+        <option value="<%= seconds %>" <%= "selected" if seconds == default_interval %>><%= option_label(seconds) %></option>
+      <% end %>
+    </select>
+  </label>
+  <span class="swui-refresh__status" data-swui-refresh-status aria-live="polite"></span>
+  <button type="button" class="swui-btn swui-refresh__now" data-swui-refresh-now aria-label="Refresh now">↻</button>
+</div>

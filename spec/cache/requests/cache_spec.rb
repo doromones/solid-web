@@ -18,6 +18,7 @@ RSpec.describe "SolidWebUi::Cache", type: :request do
       expect(response.body).to include("solid-web-ui")
       expect(response.body).to include("Entries")
       expect(response.body).to include("2") # entry count
+      expect(response.body).to include('id="swui-refresh-frame"', "data-swui-refresh")
     end
   end
 

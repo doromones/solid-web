@@ -10,6 +10,6 @@
 
   <% if SolidWebUi::Cache.config.enable_clear %>
     <%= button_to "Clear cache", clear_entries_path, method: :delete, class: "swui-btn swui-btn--danger",
-                  form: { data: { turbo_confirm: "Delete ALL cache entries?" } } %>
+                  form: { data: { turbo_frame: "_top", turbo_confirm: "Delete ALL cache entries?" } } %>
   <% end %>
 <% end %>

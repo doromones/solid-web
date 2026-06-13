@@ -10,6 +10,9 @@
   .contents {
     display: contents;
   }
+  .hidden {
+    display: none;
+  }
 }
 @layer components {
   .solid-web-ui {
@@ -42,10 +45,55 @@
     font-weight: 700;
     margin: 0;
   }
+  .solid-web-ui .swui-page__actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
   .solid-web-ui .swui-nav {
     display: flex;
     flex-wrap: wrap;
     gap: 0.25rem;
+  }
+  .solid-web-ui .swui-refresh {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .solid-web-ui .swui-refresh__field {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+  }
+  .solid-web-ui .swui-refresh__label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--swui-color-muted);
+  }
+  .solid-web-ui .swui-refresh__select {
+    padding: 0.3rem 0.5rem;
+    border: 1px solid var(--swui-color-border);
+    border-radius: var(--swui-radius);
+    background: var(--swui-color-surface);
+    color: var(--swui-color-text);
+    font: inherit;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  .solid-web-ui .swui-refresh__select:hover {
+    border-color: var(--swui-color-primary);
+  }
+  .solid-web-ui .swui-refresh__status {
+    font-size: 0.8rem;
+    color: var(--swui-color-muted);
+    font-variant-numeric: tabular-nums;
+    min-width: 8.5rem;
+  }
+  .solid-web-ui .swui-refresh__now {
+    line-height: 1;
+    padding: 0.35rem 0.55rem;
   }
   .solid-web-ui .swui-nav__link {
     display: inline-block;

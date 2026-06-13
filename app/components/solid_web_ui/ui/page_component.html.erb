@@ -4,16 +4,32 @@
   <div class="swui-page">
     <header class="swui-page__header">
       <h1 class="swui-page__title"><%= title %></h1>
-      <% if nav.any? %>
-        <nav class="swui-nav">
-          <% nav.each do |item| %>
-            <%= link_to item[:label], item[:href], class: nav_link_class(item) %>
+      <% if nav.any? || refresh? %>
+        <div class="swui-page__actions">
+          <% if nav.any? %>
+            <nav class="swui-nav">
+              <% nav.each do |item| %>
+                <%= link_to item[:label], item[:href], class: nav_link_class(item) %>
+              <% end %>
+            </nav>
           <% end %>
-        </nav>
+          <% if refresh? %>
+            <%= render(SolidWebUi::Ui::RefreshControlsComponent.new(frame_id: SolidWebUi::Ui::PageComponent::FRAME_ID)) %>
+          <% end %>
+        </div>
       <% end %>
     </header>
     <main class="swui-page__body">
-      <%= content %>
+      <% if refresh? %>
+        <%# The body is reloaded in place by the bundled JS (morph when Turbo is %>
+        <%# present). No src here: JS sets it at refresh time to avoid a redundant %>
+        <%# fetch on initial load. %>
+        <turbo-frame id="<%= SolidWebUi::Ui::PageComponent::FRAME_ID %>" refresh="morph">
+          <%= content %>
+        </turbo-frame>
+      <% else %>
+        <%= content %>
+      <% end %>
     </main>
   </div>
 </div>

@@ -27,6 +27,13 @@ RSpec.describe "SolidWebUi::Queue dashboard", type: :request do
       expect(response.body).to include("solid_web_ui")          # bundled stylesheet link
       expect(response.body).to include("Ready", "Failed")
     end
+
+    it "renders the live-refresh frame and controls" do
+      get "/admin/solid_queue"
+
+      expect(response.body).to include('id="swui-refresh-frame"')
+      expect(response.body).to include('data-swui-refresh')
+    end
   end
 
   describe "GET /jobs" do

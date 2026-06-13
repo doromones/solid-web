@@ -10,6 +10,12 @@ RSpec.describe "SolidWebUi configuration" do
     expect(SolidWebUi.config.theme).to eq({})
   end
 
+  it "exposes live-refresh settings with defaults" do
+    expect(SolidWebUi.config.javascript).to be(true)
+    expect(SolidWebUi.config.refresh_interval).to eq(10)
+    expect(SolidWebUi.config.refresh_intervals).to eq([ 0, 2, 5, 10, 30, 60 ])
+  end
+
   describe SolidWebUi::Configurable do
     let(:host_module) do
       Module.new do
