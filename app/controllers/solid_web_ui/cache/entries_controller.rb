@@ -12,6 +12,10 @@ module SolidWebUi::Cache
       scope = SolidCache::Entry.order(id: :desc)
       @paginator = SolidWebUi::Paginator.new(scope, page: params[:page], per_page: per_page)
       @entries = @paginator.records
+      # Per-entry expiry, read from each cache envelope's header (no value
+      # deserialization). Numeric epoch = has a TTL, :never = decodable but no
+      # TTL, :undecodable = couldn't be read.
+      @expiry = @entries.to_h { |entry| [ entry.id, entry_expiry(entry) ] }
     end
 
     def show
@@ -117,6 +121,14 @@ module SolidWebUi::Cache
         else
           ActiveSupport::Cache.lookup_store(:solid_cache_store)
         end
+    end
+
+    # Expiry of a single entry for the index: epoch Float, :never, or :undecodable.
+    def entry_expiry(entry)
+      decoded = decode_value(entry.value)
+      return :undecodable unless decoded.respond_to?(:expires_at)
+
+      decoded.expires_at || :never
     end
 
     # Raw stored bytes -> ActiveSupport::Cache::Entry (or nil if undecodable).

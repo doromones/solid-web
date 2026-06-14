@@ -41,6 +41,17 @@ RSpec.describe "SolidWebUi::Cache", type: :request do
 
       expect(response.body).to include("products/42")
     end
+
+    it "shows expiry and time-to-expire columns" do
+      cache_store.write("soon", "v", expires_in: 1.hour)
+      cache_store.write("forever", "v")
+
+      get "/admin/solid_cache/entries"
+
+      expect(response.body).to include("Expires", "Time to expire")
+      expect(response.body).to include("Never")          # entry without a TTL
+      expect(response.body).to match(/about 1 hour|59 minutes/) # entry with a TTL
+    end
   end
 
   describe "GET /entries/:id (show)" do

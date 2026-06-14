@@ -20,6 +20,25 @@ module SolidWebUi::Cache
       truncate(value.to_s.dup.force_encoding("UTF-8").scrub("?"), length: length)
     end
 
+    # Absolute expiry of a cache entry (see EntriesController#entry_expiry).
+    def cache_expires_at(expiry)
+      case expiry
+      when Numeric then short_time(Time.at(expiry))
+      when :never  then "Never"
+      else "—"
+      end
+    end
+
+    # Remaining time until a cache entry expires, e.g. "about 2 hours" / "expired".
+    def cache_time_to_expire(expiry)
+      return "—" unless expiry.is_a?(Numeric)
+
+      remaining = expiry - Time.now.to_f
+      return "expired" if remaining <= 0
+
+      distance_of_time_in_words(remaining)
+    end
+
     def short_time(time)
       return "—" if time.nil?
 
