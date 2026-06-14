@@ -228,6 +228,16 @@ RSpec.describe "SolidWebUi::Cache", type: :request do
       expect(SolidCache::Entry.exists?(entry.id)).to be(false)
     end
 
+    it "shows a flash notice once in the gem's standalone layout" do
+      entry = seed_cache("k", "v")
+
+      delete "/admin/solid_cache/entries/#{entry.id}"
+      follow_redirect!
+
+      expect(response.body.scan("Entry deleted.").size).to eq(1)
+      expect(response.body).to include("swui-flash--notice")
+    end
+
     it "is forbidden when deletion is disabled" do
       SolidCache::Entry.write("k", "v")
       entry = SolidCache::Entry.order(:id).last

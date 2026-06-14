@@ -13,9 +13,6 @@
       <% end %>
     </header>
     <main class="swui-page__body">
-      <% helpers.flash.each do |type, message| %>
-        <div class="swui-flash swui-flash--<%= type.to_s == "alert" ? "alert" : "notice" %>"><%= message %></div>
-      <% end %>
       <% if refresh? %>
         <%# Controls sit just above the data region, right-aligned, and OUTSIDE the %>
         <%# frame so the <select> value and the countdown survive every reload. %>

@@ -341,6 +341,12 @@
   }
 
   /* Flash messages ----------------------------------------------------- */
+  .solid-web-ui .swui-flash-region {
+    max-width: 72rem;
+    margin-inline: auto;
+    padding: 1.5rem 1.5rem 0;
+  }
+
   .solid-web-ui .swui-flash {
     padding: 0.6rem 0.85rem;
     margin-bottom: 1rem;
