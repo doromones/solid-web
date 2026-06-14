@@ -11,6 +11,13 @@ RSpec.describe SolidWebUi::Theme do
       expect(css).to include("--swui-color-bg:")
       expect(css).to include("--swui-radius:")
       expect(css).to include("--swui-font:")
+      expect(css).to include("--swui-page-max-width: 72rem;")
+    end
+
+    it "lets the page width be overridden to fill the container" do
+      css = described_class.css_vars(page_max_width: "none")
+
+      expect(css).to include("--swui-page-max-width: none;")
     end
 
     it "lets defaults inherit common host variables via fallback" do

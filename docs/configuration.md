@@ -80,6 +80,11 @@ Two requirements on that host layout:
 The dashboard content is self-scoped under `.solid-web-ui`, so its styling never
 leaks into the rest of the host layout.
 
+> **Flash messages:** the gem renders `flash` only in its own standalone layout. When
+> embedded, the host layout is responsible for displaying flash (mutating actions —
+> create/update/delete, clear, trim — redirect with a `notice`/`alert`). Most app
+> layouts already render flash; if yours doesn't, add it so those confirmations show.
+
 ## Theming settings
 
 Theming lives on `SolidWebUi.config` and applies to all three dashboards — see
@@ -87,7 +92,7 @@ Theming lives on `SolidWebUi.config` and applies to all three dashboards — see
 
 | Setting | Type | Default | Purpose |
 |---------|------|---------|---------|
-| `theme` | Hash | `{}` | Design-token value overrides, e.g. `{ color_primary: "#7c3aed" }`. |
+| `theme` | Hash | `{}` | Design-token value overrides, e.g. `{ color_primary: "#7c3aed" }`. The `page_max_width` token (default `72rem`) caps the centered page column — set it to `"none"` or `"100%"` to let the dashboards fill their container when embedded in a wide host layout. |
 | `color_scheme` | String | `"auto"` | `"auto"` \| `"light"` \| `"dark"`. |
 | `stylesheet` | Boolean | `true` | Link the bundled stylesheet. `false` lets the host style everything. |
 | `extra_stylesheets` | Array | `[]` | Extra Propshaft stylesheet names linked after the bundled one. |

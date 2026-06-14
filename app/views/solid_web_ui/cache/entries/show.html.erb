@@ -1,0 +1,50 @@
+<% content_for :title, "Cache entry ##{@entry.id}" %>
+<%= swui_page(title: "Cache entry ##{@entry.id}", nav: cache_nav(:entries), refresh: false) do %>
+  <%= link_to "← Back to entries", entries_path, class: "swui-back" %>
+
+  <dl class="swui-detail">
+    <dt>ID</dt>
+    <dd><%= @entry.id %></dd>
+
+    <dt>Key</dt>
+    <dd><code><%= readable_key(@entry.key, length: 1024) %></code></dd>
+
+    <dt>Key hash</dt>
+    <dd><code><%= @entry.key_hash %></code></dd>
+
+    <dt>Size</dt>
+    <dd><%= number_to_human_size(@entry.byte_size) %> (<%= number_with_delimiter(@entry.byte_size) %> bytes)</dd>
+
+    <dt>Created</dt>
+    <dd><%= short_time(@entry.created_at) %></dd>
+
+    <% if @decoded.respond_to?(:expires_at) %>
+      <dt>Expires</dt>
+      <dd><%= @decoded.expires_at ? short_time(Time.at(@decoded.expires_at)) : "Never" %></dd>
+    <% end %>
+
+    <% if @decoded.respond_to?(:version) %>
+      <dt>Version</dt>
+      <dd><%= @decoded.version.presence || "—" %></dd>
+    <% end %>
+
+    <dt>Value<% unless @value_readable %> <span class="swui-detail__hint">(raw — unreadable)</span><% end %></dt>
+    <dd>
+      <% if @value_readable %>
+        <pre class="swui-codeblock"><%= @value_text %></pre>
+      <% else %>
+        <pre class="swui-codeblock"><%= readable_value(@entry.value) %></pre>
+      <% end %>
+    </dd>
+  </dl>
+
+  <div class="swui-actions">
+    <% if SolidWebUi::Cache.config.enable_edit %>
+      <%= link_to "Edit", edit_entry_path(@entry), class: "swui-btn", data: { turbo_frame: "_top" } %>
+    <% end %>
+    <% if SolidWebUi::Cache.config.enable_delete %>
+      <%= swui_action_button(label: "Delete", url: entry_path(@entry), method: :delete,
+                             danger: true, confirm: "Delete this cache entry?") %>
+    <% end %>
+  </div>
+<% end %>

@@ -7,6 +7,10 @@ module SolidWebUi::Cable
 
     private
 
+    def per_page
+      SolidWebUi::Cable.config.per_page
+    end
+
     def trimmable_scope
       SolidCable::Message.where(created_at: ...SolidWebUi::Cable.config.retention.ago)
     end

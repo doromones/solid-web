@@ -21,7 +21,10 @@ module SolidWebUi
       color_warning: [ "--swui-color-warning", "var(--color-warning, #d97706)" ],
       color_danger: [ "--swui-color-danger", "var(--color-danger, #dc2626)" ],
       font: [ "--swui-font", "var(--swui-host-font, ui-sans-serif, system-ui, sans-serif)" ],
-      radius: [ "--swui-radius", "0.5rem" ]
+      radius: [ "--swui-radius", "0.5rem" ],
+      # Max width of the centered page column. Set to "none" or "100%" to let the
+      # dashboards fill their container (useful when embedded in a host layout).
+      page_max_width: [ "--swui-page-max-width", "72rem" ]
     }.freeze
 
     # Dark scheme only re-points the surface/text family; brand color stays.

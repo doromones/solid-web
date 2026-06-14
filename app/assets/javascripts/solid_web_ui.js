@@ -123,3 +123,23 @@
   document.addEventListener("turbo:load", bindAll);
   window.setInterval(tick, TICK_MS);
 })();
+
+// Clickable table rows: a row carrying data-swui-row-href navigates to that URL.
+// A single delegated listener (bound once, survives frame morphs). Clicks on an
+// inner link/button keep their own behaviour, and modified/middle clicks are left
+// to the browser so "open in new tab" still works via the row's ID link.
+(function () {
+  "use strict";
+
+  document.addEventListener("click", function (event) {
+    if (event.defaultPrevented || event.button !== 0 || event.metaKey ||
+        event.ctrlKey || event.shiftKey || event.altKey) return;
+    if (event.target.closest("a, button, input, label, select, textarea")) return;
+
+    var row = event.target.closest("tr[data-swui-row-href]");
+    if (!row) return;
+
+    var href = row.getAttribute("data-swui-row-href");
+    if (href) window.location.assign(href);
+  });
+})();

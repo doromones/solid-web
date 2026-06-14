@@ -8,6 +8,7 @@ SolidWebUi::Queue::Engine.routes.draw do
   post "queues/:name/resume", to: "queues#resume", as: :resume_queue, constraints: { name: %r{[^/]+} }
 
   get "jobs", to: "jobs#index", as: :jobs
+  get "jobs/:id", to: "jobs#show", as: :job
 
   get "failed", to: "failed_executions#index", as: :failed_executions
   post "failed/:id/retry", to: "failed_executions#retry", as: :retry_failed_execution

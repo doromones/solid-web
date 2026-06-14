@@ -1,0 +1,8 @@
+<% content_for :title, "New cache entry" %>
+<%= swui_page(title: "New cache entry", nav: cache_nav(:entries), refresh: false) do %>
+  <%= link_to "← Back to entries", entries_path, class: "swui-back" %>
+
+  <%= render "form", url: entries_path, method: :post, new_record: true,
+                     value_editable: true, meta_editable: true, note: nil, cancel_url: entries_path,
+                     key: @key, value: @value, expires_at: @expires_at, version: @version %>
+<% end %>

@@ -1,0 +1,21 @@
+<% content_for :title, "Message ##{@message.id}" %>
+<%= swui_page(title: "Message ##{@message.id}", nav: cable_nav(:channels), refresh: false) do %>
+  <%= link_to "← Back to channel", channel_path(@message.channel_hash), class: "swui-back" %>
+
+  <dl class="swui-detail">
+    <dt>ID</dt>
+    <dd><%= @message.id %></dd>
+
+    <dt>Channel</dt>
+    <dd><code><%= readable_channel(@message.channel, length: 1024) %></code></dd>
+
+    <dt>Channel hash</dt>
+    <dd><code><%= @message.channel_hash %></code></dd>
+
+    <dt>Created</dt>
+    <dd><%= short_time(@message.created_at) %></dd>
+
+    <dt>Payload</dt>
+    <dd><pre class="swui-codeblock"><%= readable_payload(@message.payload, length: 100_000) %></pre></dd>
+  </dl>
+<% end %>

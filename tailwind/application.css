@@ -35,9 +35,15 @@
     box-sizing: border-box;
   }
 
+  /* Hint native form controls (datetime pickers, select menus, scrollbars) to
+     match the dashboard's scheme so they stay legible in dark mode. */
+  .solid-web-ui[data-color-scheme="light"] { color-scheme: light; }
+  .solid-web-ui[data-color-scheme="dark"]  { color-scheme: dark; }
+  .solid-web-ui[data-color-scheme="auto"]  { color-scheme: light dark; }
+
   /* Page chrome -------------------------------------------------------- */
   .solid-web-ui .swui-page {
-    max-width: 72rem;
+    max-width: var(--swui-page-max-width, 72rem);
     margin-inline: auto;
     padding: 1.5rem;
   }
@@ -223,6 +229,13 @@
 
   .solid-web-ui .swui-table tr:last-child td { border-bottom: 0; }
 
+  /* Clickable rows (drill into a detail page) ------------------------- */
+  .solid-web-ui .swui-table tbody tr[data-swui-row-href] { cursor: pointer; }
+
+  .solid-web-ui .swui-table tbody tr[data-swui-row-href]:hover {
+    background: color-mix(in srgb, var(--swui-color-primary) 8%, transparent);
+  }
+
   .solid-web-ui .swui-table__empty td {
     text-align: center;
     color: var(--swui-color-muted);
@@ -283,5 +296,172 @@
     font-size: 1.05rem;
     font-weight: 600;
     margin: 1.5rem 0 0.75rem;
+  }
+
+  /* Back link ---------------------------------------------------------- */
+  .solid-web-ui .swui-back {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: var(--swui-color-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+  }
+
+  .solid-web-ui .swui-back:hover { color: var(--swui-color-text); }
+
+  /* Detail (definition) list ------------------------------------------- */
+  .solid-web-ui .swui-detail {
+    display: grid;
+    grid-template-columns: minmax(8rem, 14rem) 1fr;
+    gap: 0;
+    margin: 0 0 1.5rem;
+    background: var(--swui-color-surface);
+    border: 1px solid var(--swui-color-border);
+    border-radius: var(--swui-radius);
+    overflow: hidden;
+    font-size: 0.9rem;
+  }
+
+  .solid-web-ui .swui-detail dt,
+  .solid-web-ui .swui-detail dd {
+    padding: 0.6rem 0.85rem;
+    border-bottom: 1px solid var(--swui-color-border);
+    margin: 0;
+  }
+
+  .solid-web-ui .swui-detail dt {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--swui-color-muted);
+    background: color-mix(in srgb, var(--swui-color-muted) 6%, transparent);
+  }
+
+  .solid-web-ui .swui-detail > dt:last-of-type,
+  .solid-web-ui .swui-detail > dd:last-of-type { border-bottom: 0; }
+
+  .solid-web-ui .swui-detail__hint {
+    text-transform: none;
+    letter-spacing: 0;
+    opacity: 0.8;
+  }
+
+  /* Flash messages ----------------------------------------------------- */
+  .solid-web-ui .swui-flash-region {
+    max-width: var(--swui-page-max-width, 72rem);
+    margin-inline: auto;
+    padding: 1.5rem 1.5rem 0;
+  }
+
+  .solid-web-ui .swui-flash {
+    padding: 0.6rem 0.85rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--swui-color-border);
+    border-radius: var(--swui-radius);
+    font-size: 0.9rem;
+  }
+
+  .solid-web-ui .swui-flash--notice {
+    border-color: var(--swui-color-success);
+    background: color-mix(in srgb, var(--swui-color-success) 14%, transparent);
+  }
+
+  .solid-web-ui .swui-flash--alert {
+    border-color: var(--swui-color-danger);
+    background: color-mix(in srgb, var(--swui-color-danger) 14%, transparent);
+  }
+
+  /* Action toolbar ----------------------------------------------------- */
+  .solid-web-ui .swui-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Forms -------------------------------------------------------------- */
+  .solid-web-ui .swui-form {
+    max-width: 48rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .solid-web-ui .swui-field { margin-bottom: 1rem; }
+
+  .solid-web-ui .swui-fieldset {
+    margin: 0 0 1rem;
+    padding: 1rem 1.1rem 0.25rem;
+    border: 1px solid var(--swui-color-border);
+    border-radius: var(--swui-radius);
+  }
+
+  .solid-web-ui .swui-fieldset legend {
+    padding: 0 0.4rem;
+  }
+
+  .solid-web-ui .swui-label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--swui-color-muted);
+  }
+
+  .solid-web-ui .swui-input,
+  .solid-web-ui .swui-textarea {
+    width: 100%;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid var(--swui-color-border);
+    border-radius: var(--swui-radius);
+    background: var(--swui-color-surface);
+    color: var(--swui-color-text);
+    font: inherit;
+    font-size: 0.9rem;
+  }
+
+  .solid-web-ui .swui-textarea {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    line-height: 1.45;
+    resize: vertical;
+  }
+
+  .solid-web-ui .swui-input:focus,
+  .solid-web-ui .swui-textarea:focus {
+    outline: none;
+    border-color: var(--swui-color-primary);
+  }
+
+  .solid-web-ui .swui-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .solid-web-ui .swui-hint {
+    margin: 0.35rem 0 0;
+    font-size: 0.8rem;
+    color: var(--swui-color-muted);
+  }
+
+  .solid-web-ui .swui-form__actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+
+  /* Code / backtrace block --------------------------------------------- */
+  .solid-web-ui .swui-codeblock {
+    margin: 0;
+    padding: 0.75rem;
+    max-height: 24rem;
+    overflow: auto;
+    background: color-mix(in srgb, var(--swui-color-muted) 8%, transparent);
+    border: 1px solid var(--swui-color-border);
+    border-radius: var(--swui-radius);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.8rem;
+    line-height: 1.45;
+    white-space: pre;
+    color: var(--swui-color-text);
   }
 }

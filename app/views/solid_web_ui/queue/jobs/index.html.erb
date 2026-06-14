@@ -9,8 +9,8 @@
 
   <%= swui_table(headers: [ "ID", "Job", "Queue", "Status", "Created" ], empty_message: "No jobs.") do %>
     <% @jobs.each do |job| %>
-      <tr>
-        <td><%= job.id %></td>
+      <tr data-swui-row-href="<%= job_path(job) %>">
+        <td><%= link_to job.id, job_path(job), data: { turbo_frame: "_top" } %></td>
         <td><%= job.class_name %></td>
         <td><%= job.queue_name %></td>
         <td><%= swui_status_badge(label: job_status(job).to_s.humanize, status: job_status(job)) %></td>

@@ -35,6 +35,37 @@ RSpec.describe "SolidWebUi::Cable", type: :request do
     end
   end
 
+  describe "GET /channels/:channel_hash (show)" do
+    it "lists recent messages for the channel" do
+      broadcast(channel: "alerts", hash: 555)
+      broadcast(channel: "alerts", hash: 555)
+      broadcast(channel: "other", hash: 999)
+
+      get "/admin/solid_cable/channels/555"
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("alerts", "Recent messages")
+      expect(response.body).not_to include("other")
+    end
+
+    it "raises RecordNotFound (→ 404 in a host app) for an unknown channel hash" do
+      expect { get "/admin/solid_cable/channels/424242" }
+        .to raise_error(ActiveRecord::RecordNotFound)
+    end
+  end
+
+  describe "GET /messages/:id (show)" do
+    it "renders the full payload of a single message" do
+      msg = broadcast(channel: "alerts", hash: 555)
+      msg.update_column(:payload, "the-complete-payload-body")
+
+      get "/admin/solid_cable/messages/#{msg.id}"
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("the-complete-payload-body", "alerts")
+    end
+  end
+
   describe "DELETE /messages/trim" do
     it "trims messages older than the retention window" do
       broadcast(channel: "old", hash: 1, created_at: 2.days.ago)

@@ -1,0 +1,9 @@
+<% content_for :title, "Edit cache entry ##{@entry.id}" %>
+<%= swui_page(title: "Edit cache entry ##{@entry.id}", nav: cache_nav(:entries), refresh: false) do %>
+  <%= link_to "← Back to entry", entry_path(@entry), class: "swui-back" %>
+
+  <%= render "form", url: entry_path(@entry), method: :patch, new_record: false,
+                     value_editable: @value_editable, meta_editable: @meta_editable, note: @note,
+                     cancel_url: entry_path(@entry),
+                     key: @key, value: @value, expires_at: @expires_at, version: @version %>
+<% end %>

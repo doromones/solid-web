@@ -8,6 +8,18 @@
   <%= solid_web_ui_head_tags %>
 </head>
 <body>
+  <%# Flash lives in the gem's own layout only. When the dashboards are embedded %>
+  <%# in a host layout (config.layout = "your_layout"), the host renders flash, so %>
+  <%# rendering it here too would duplicate it. %>
+  <% if flash.any? %>
+    <div class="solid-web-ui" data-color-scheme="<%= SolidWebUi.config.color_scheme %>">
+      <div class="swui-flash-region">
+        <% flash.each do |type, message| %>
+          <div class="swui-flash swui-flash--<%= type.to_s == "alert" ? "alert" : "notice" %>"><%= message %></div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
   <%= yield %>
 </body>
 </html>
