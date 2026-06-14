@@ -27,6 +27,8 @@ module SolidWebUi::Cache
       when :never  then "Never"
       else "—"
       end
+    rescue StandardError
+      "—" # a corrupt/out-of-range epoch shouldn't break the list
     end
 
     # Remaining time until a cache entry expires, e.g. "about 2 hours" / "expired".

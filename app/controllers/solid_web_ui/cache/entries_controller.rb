@@ -20,6 +20,9 @@ module SolidWebUi::Cache
 
     def show
       @decoded = decode_value(@entry.value)
+      value = resolved_value(@decoded)
+      @value_readable = value != UNREADABLE
+      @value_text = value.is_a?(String) ? value : value.inspect if @value_readable
     end
 
     def new
@@ -50,32 +53,33 @@ module SolidWebUi::Cache
 
     def edit
       decoded = decode_value(@entry.value)
-      @value_editable = editable_value?(decoded)
-      @meta_editable = decoded.respond_to?(:value)
+      value = resolved_value(decoded)
+      @value_editable = value.is_a?(String)
+      @meta_editable = value != UNREADABLE
       @key = scrub_for_display(@entry.key)
       @expires_at = format_expires_at(decoded)
       @version = (decoded.version if decoded.respond_to?(:version)).to_s
 
       if @value_editable
-        @value = decoded.value
+        @value = value
       elsif @meta_editable
-        @value = decoded.value.inspect
-        @note = "This entry holds a #{decoded.value.class} (not a plain string), so the value is " \
+        @value = value.inspect
+        @note = "This entry holds a #{value.class} (not a plain string), so the value is " \
                 "read-only — but you can still change its metadata below."
       else
         @value = scrub_for_display(@entry.value)
-        @note = "This value couldn't be decoded as a cache entry (it may use a different cache " \
-                "format), so it can't be edited here."
+        @note = "This value couldn't be read as a cache entry (it may use a different cache format " \
+                "or reference a class this app can't load), so it can't be edited here."
       end
     end
 
     def update
-      decoded = decode_value(@entry.value)
-      unless decoded.respond_to?(:value)
+      value = resolved_value(decode_value(@entry.value))
+      if value == UNREADABLE
         return redirect_to edit_entry_path(@entry), alert: "This entry can't be edited."
       end
 
-      value = decoded.value.is_a?(String) ? params[:value].to_s : decoded.value
+      value = params[:value].to_s if value.is_a?(String)
       expires_at = parse_expires_at(params[:expires_at])
       SolidCache::Entry.write(@entry.key, encode_entry(value, version: params[:version].presence, expires_at: expires_at))
       redirect_to entry_path(@entry), notice: "Entry updated."
@@ -97,6 +101,12 @@ module SolidWebUi::Cache
 
     InvalidExpiry = Class.new(StandardError)
 
+    # Sentinel for a value that can't be read — either the entry didn't decode, or
+    # its envelope decoded but resolving the value raised (a LazyEntry resolves on
+    # first access and can fail, e.g. a Marshal value for a class this app can't load).
+    UNREADABLE = Object.new.freeze
+    private_constant :UNREADABLE
+
     def set_entry
       @entry = SolidCache::Entry.find(params[:id])
     end
@@ -106,9 +116,13 @@ module SolidWebUi::Cache
       render :new, status: :unprocessable_entity
     end
 
-    # Only plain-string cache values can round-trip through a textarea.
-    def editable_value?(decoded)
-      decoded.respond_to?(:value) && decoded.value.is_a?(String)
+    # Resolve a decoded entry's value, returning UNREADABLE if it can't be read.
+    def resolved_value(decoded)
+      return UNREADABLE unless decoded.respond_to?(:value)
+
+      decoded.value
+    rescue StandardError
+      UNREADABLE
     end
 
     # The cache store whose coder matches how these entries were written. Prefer the
@@ -155,6 +169,8 @@ module SolidWebUi::Cache
       return "" unless epoch
 
       Time.at(epoch).in_time_zone(cache_time_zone).strftime("%Y-%m-%dT%H:%M:%S")
+    rescue StandardError
+      "" # a corrupt/out-of-range epoch shouldn't break the form
     end
 
     # Form string (in the dashboard's time zone) -> a Time, or nil for "no expiry".
@@ -162,7 +178,7 @@ module SolidWebUi::Cache
       return nil if str.blank?
 
       cache_time_zone.parse(str) || raise(InvalidExpiry)
-    rescue ArgumentError
+    rescue ArgumentError, RangeError, TypeError
       raise InvalidExpiry
     end
 

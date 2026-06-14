@@ -80,6 +80,11 @@ Two requirements on that host layout:
 The dashboard content is self-scoped under `.solid-web-ui`, so its styling never
 leaks into the rest of the host layout.
 
+> **Flash messages:** the gem renders `flash` only in its own standalone layout. When
+> embedded, the host layout is responsible for displaying flash (mutating actions —
+> create/update/delete, clear, trim — redirect with a `notice`/`alert`). Most app
+> layouts already render flash; if yours doesn't, add it so those confirmations show.
+
 ## Theming settings
 
 Theming lives on `SolidWebUi.config` and applies to all three dashboards — see

@@ -28,10 +28,10 @@
       <dd><%= @decoded.version.presence || "—" %></dd>
     <% end %>
 
-    <dt>Value<% unless @decoded.respond_to?(:value) %> <span class="swui-detail__hint">(raw — undecodable)</span><% end %></dt>
+    <dt>Value<% unless @value_readable %> <span class="swui-detail__hint">(raw — unreadable)</span><% end %></dt>
     <dd>
-      <% if @decoded.respond_to?(:value) %>
-        <pre class="swui-codeblock"><%= @decoded.value.is_a?(String) ? @decoded.value : @decoded.value.inspect %></pre>
+      <% if @value_readable %>
+        <pre class="swui-codeblock"><%= @value_text %></pre>
       <% else %>
         <pre class="swui-codeblock"><%= readable_value(@entry.value) %></pre>
       <% end %>

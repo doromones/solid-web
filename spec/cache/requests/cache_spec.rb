@@ -165,7 +165,23 @@ RSpec.describe "SolidWebUi::Cache", type: :request do
       get "/admin/solid_cache/entries/#{entry.id}/edit"
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("couldn&#39;t be decoded").or include("couldn't be decoded")
+      expect(response.body).to include("couldn&#39;t be read").or include("couldn't be read")
+      expect(response.body).not_to include("Save changes")
+    end
+
+    it "stays read-only without crashing when the value fails to deserialize" do
+      # A valid envelope whose inner (non-string) value bytes are corrupted, so the
+      # header decodes but LazyEntry#value raises on resolution.
+      good = cache_store.send(:serialize_entry, ActiveSupport::Cache::Entry.new({ "a" => "x" * 4000 }))
+      corrupt = good.dup
+      corrupt[-16..] = "\x00" * 16
+      SolidCache::Entry.write("corrupt", corrupt)
+      entry = SolidCache::Entry.order(:id).last
+
+      get "/admin/solid_cache/entries/#{entry.id}/edit"
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to match(/couldn(&#39;|')t be (read|decoded)/)
       expect(response.body).not_to include("Save changes")
     end
 
