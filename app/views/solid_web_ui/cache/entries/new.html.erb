@@ -2,6 +2,6 @@
 <%= swui_page(title: "New cache entry", nav: cache_nav(:entries), refresh: false) do %>
   <%= link_to "← Back to entries", entries_path, class: "swui-back" %>
 
-  <%= render "form", url: entries_path, method: :post, new_record: true,
+  <%= render "form", url: entries_path, method: :post, new_record: true, binary: false,
                      cancel_url: entries_path, key: @key, value: @value %>
 <% end %>

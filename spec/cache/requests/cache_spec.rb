@@ -85,6 +85,27 @@ RSpec.describe "SolidWebUi::Cache", type: :request do
   end
 
   describe "editing entries" do
+    it "renders the edit form for a text value" do
+      SolidCache::Entry.write("k", "editable text")
+      entry = SolidCache::Entry.order(:id).last
+
+      get "/admin/solid_cache/entries/#{entry.id}/edit"
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("editable text", "swui-form")
+    end
+
+    it "renders the edit form for a binary value without crashing" do
+      blob = (+"\xC3\x28marshal\x00blob").force_encoding(Encoding::BINARY)
+      SolidCache::Entry.write("bin", blob)
+      entry = SolidCache::Entry.order(:id).last
+
+      get "/admin/solid_cache/entries/#{entry.id}/edit"
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("isn&#39;t valid UTF-8").or include("isn't valid UTF-8")
+    end
+
     it "updates the value" do
       SolidCache::Entry.write("k", "old")
       entry = SolidCache::Entry.order(:id).last

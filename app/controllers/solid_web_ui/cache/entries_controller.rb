@@ -39,8 +39,10 @@ module SolidWebUi::Cache
     end
 
     def edit
-      @key = @entry.key.to_s.dup.force_encoding("UTF-8")
-      @value = @entry.value.to_s.dup.force_encoding("UTF-8")
+      raw = @entry.value.to_s
+      @binary = !raw.dup.force_encoding("UTF-8").valid_encoding?
+      @key = scrub_for_display(@entry.key)
+      @value = scrub_for_display(raw)
     end
 
     def update
@@ -63,6 +65,12 @@ module SolidWebUi::Cache
 
     def set_entry
       @entry = SolidCache::Entry.find(params[:id])
+    end
+
+    # Cache keys/values are binary; force to UTF-8 and replace any invalid bytes
+    # so they can be rendered in a form field without raising.
+    def scrub_for_display(bytes)
+      bytes.to_s.dup.force_encoding("UTF-8").scrub("?")
     end
 
     def ensure_clear_enabled
