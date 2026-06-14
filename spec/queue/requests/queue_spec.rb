@@ -48,6 +48,35 @@ RSpec.describe "SolidWebUi::Queue dashboard", type: :request do
     end
   end
 
+  describe "GET /jobs/:id (show)" do
+    it "renders job details including a computed duration for a finished job" do
+      job = create_job
+      job.ready_execution&.destroy
+      job.update!(created_at: 5.seconds.ago, finished_at: Time.current)
+
+      get "/admin/solid_queue/jobs/#{job.id}"
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("DemoJob", "Duration")
+      expect(response.body).to match(/\d+\.\ds|\dm \d{2}s/) # humanized duration
+    end
+
+    it "shows the exception class, message and backtrace for a failed job" do
+      job = create_job
+      job.ready_execution&.destroy
+      SolidQueue::FailedExecution.create!(
+        job: job,
+        error: { "exception_class" => "Faraday::TimeoutError", "message" => "boom",
+                 "backtrace" => [ "app/jobs/demo_job.rb:7:in `perform'", "lib/runner.rb:3" ] }
+      )
+
+      get "/admin/solid_queue/jobs/#{job.id}"
+
+      expect(response.body).to include("Faraday::TimeoutError", "boom",
+                                       "app/jobs/demo_job.rb:7", "Backtrace")
+    end
+  end
+
   describe "queues" do
     it "lists queues and pauses/resumes them" do
       create_job(queue: "mailers") # ready → queue appears

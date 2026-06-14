@@ -2,8 +2,8 @@
 <%= swui_page(title: "Channels", nav: cable_nav(:channels)) do %>
   <%= swui_table(headers: [ "Channel", "Messages", "Last activity" ], empty_message: "No channels.") do %>
     <% @channels.each do |row| %>
-      <tr>
-        <td><code><%= readable_channel(row[:name]) %></code></td>
+      <tr data-swui-row-href="<%= channel_path(row[:hash]) %>">
+        <td><%= link_to channel_path(row[:hash]), data: { turbo_frame: "_top" } do %><code><%= readable_channel(row[:name]) %></code><% end %></td>
         <td><%= number_with_delimiter(row[:count]) %></td>
         <td><%= short_time(row[:last]) %></td>
       </tr>

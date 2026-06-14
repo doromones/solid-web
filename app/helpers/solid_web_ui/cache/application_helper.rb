@@ -10,8 +10,14 @@ module SolidWebUi::Cache
     end
 
     # Cache keys are stored as binary; present them as readable, truncated text.
-    def readable_key(key)
-      truncate(key.to_s.dup.force_encoding("UTF-8").scrub("?"), length: 80)
+    def readable_key(key, length: 80)
+      truncate(key.to_s.dup.force_encoding("UTF-8").scrub("?"), length: length)
+    end
+
+    # Cache values are binary (often a Marshal/compressed blob). Present a scrubbed,
+    # truncated preview so the show page never dumps megabytes of unreadable bytes.
+    def readable_value(value, length: 2000)
+      truncate(value.to_s.dup.force_encoding("UTF-8").scrub("?"), length: length)
     end
 
     def short_time(time)

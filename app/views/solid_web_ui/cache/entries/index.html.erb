@@ -2,8 +2,8 @@
 <%= swui_page(title: "Cache entries", nav: cache_nav(:entries)) do %>
   <%= swui_table(headers: [ "ID", "Key", "Size", "Created" ], empty_message: "The cache is empty.") do %>
     <% @entries.each do |entry| %>
-      <tr>
-        <td><%= entry.id %></td>
+      <tr data-swui-row-href="<%= entry_path(entry) %>">
+        <td><%= link_to entry.id, entry_path(entry), data: { turbo_frame: "_top" } %></td>
         <td><code><%= readable_key(entry.key) %></code></td>
         <td><%= number_to_human_size(entry.byte_size) %></td>
         <td><%= short_time(entry.created_at) %></td>

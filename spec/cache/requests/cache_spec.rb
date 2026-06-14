@@ -32,6 +32,18 @@ RSpec.describe "SolidWebUi::Cache", type: :request do
     end
   end
 
+  describe "GET /entries/:id (show)" do
+    it "renders the full key and a value preview" do
+      entry = create_entry(key: "users/7/profile", bytes: 12, hash: 123)
+      entry.update!(value: "hello-cached-value")
+
+      get "/admin/solid_cache/entries/#{entry.id}"
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("users/7/profile", "hello-cached-value", "Key hash")
+    end
+  end
+
   describe "DELETE /entries (clear)" do
     it "clears the cache when enabled" do
       create_entry(key: "k", bytes: 10, hash: 7)

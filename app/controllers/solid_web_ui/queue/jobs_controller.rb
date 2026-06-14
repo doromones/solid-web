@@ -20,5 +20,12 @@ module SolidWebUi::Queue
       @paginator = SolidWebUi::Paginator.new(scope, page: params[:page], per_page: per_page)
       @jobs = @paginator.records
     end
+
+    def show
+      @job = SolidQueue::Job
+             .includes(:ready_execution, :scheduled_execution, :claimed_execution,
+                       :blocked_execution, :failed_execution)
+             .find(params[:id])
+    end
   end
 end

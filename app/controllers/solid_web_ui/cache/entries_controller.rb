@@ -10,6 +10,10 @@ module SolidWebUi::Cache
       @entries = @paginator.records
     end
 
+    def show
+      @entry = SolidCache::Entry.find(params[:id])
+    end
+
     def clear
       SolidCache::Entry.delete_all
       redirect_to root_path, notice: "Cache cleared."

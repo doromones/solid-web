@@ -2,6 +2,9 @@
 @layer properties;
 @layer theme, components, utilities;
 @layer utilities {
+  .visible {
+    visibility: visible;
+  }
   .static {
     position: static;
   }
@@ -13,6 +16,9 @@
   }
   .hidden {
     display: none;
+  }
+  .table {
+    display: table;
   }
   .filter {
     filter: var(--tw-blur,) var(--tw-brightness,) var(--tw-contrast,) var(--tw-grayscale,) var(--tw-hue-rotate,) var(--tw-invert,) var(--tw-saturate,) var(--tw-sepia,) var(--tw-drop-shadow,);
@@ -224,6 +230,15 @@
   .solid-web-ui .swui-table tr:last-child td {
     border-bottom: 0;
   }
+  .solid-web-ui .swui-table tbody tr[data-swui-row-href] {
+    cursor: pointer;
+  }
+  .solid-web-ui .swui-table tbody tr[data-swui-row-href]:hover {
+    background: var(--swui-color-primary);
+    @supports (color: color-mix(in lab, red, red)) {
+      background: color-mix(in srgb, var(--swui-color-primary) 8%, transparent);
+    }
+  }
   .solid-web-ui .swui-table__empty td {
     text-align: center;
     color: var(--swui-color-muted);
@@ -279,6 +294,67 @@
     font-size: 1.05rem;
     font-weight: 600;
     margin: 1.5rem 0 0.75rem;
+  }
+  .solid-web-ui .swui-back {
+    display: inline-block;
+    margin-bottom: 1rem;
+    color: var(--swui-color-muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+  }
+  .solid-web-ui .swui-back:hover {
+    color: var(--swui-color-text);
+  }
+  .solid-web-ui .swui-detail {
+    display: grid;
+    grid-template-columns: minmax(8rem, 14rem) 1fr;
+    gap: 0;
+    margin: 0 0 1.5rem;
+    background: var(--swui-color-surface);
+    border: 1px solid var(--swui-color-border);
+    border-radius: var(--swui-radius);
+    overflow: hidden;
+    font-size: 0.9rem;
+  }
+  .solid-web-ui .swui-detail dt, .solid-web-ui .swui-detail dd {
+    padding: 0.6rem 0.85rem;
+    border-bottom: 1px solid var(--swui-color-border);
+    margin: 0;
+  }
+  .solid-web-ui .swui-detail dt {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--swui-color-muted);
+    background: var(--swui-color-muted);
+    @supports (color: color-mix(in lab, red, red)) {
+      background: color-mix(in srgb, var(--swui-color-muted) 6%, transparent);
+    }
+  }
+  .solid-web-ui .swui-detail > dt:last-of-type, .solid-web-ui .swui-detail > dd:last-of-type {
+    border-bottom: 0;
+  }
+  .solid-web-ui .swui-detail__hint {
+    text-transform: none;
+    letter-spacing: 0;
+    opacity: 0.8;
+  }
+  .solid-web-ui .swui-codeblock {
+    margin: 0;
+    padding: 0.75rem;
+    max-height: 24rem;
+    overflow: auto;
+    background: var(--swui-color-muted);
+    @supports (color: color-mix(in lab, red, red)) {
+      background: color-mix(in srgb, var(--swui-color-muted) 8%, transparent);
+    }
+    border: 1px solid var(--swui-color-border);
+    border-radius: var(--swui-radius);
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    font-size: 0.8rem;
+    line-height: 1.45;
+    white-space: pre;
+    color: var(--swui-color-text);
   }
 }
 @property --tw-blur {

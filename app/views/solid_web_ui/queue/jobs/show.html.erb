@@ -1,0 +1,62 @@
+<% content_for :title, "Job ##{@job.id}" %>
+<%= swui_page(title: "Job ##{@job.id}", nav: queue_nav(:jobs), refresh: false) do %>
+  <%= link_to "← Back to jobs", jobs_path, class: "swui-back" %>
+
+  <dl class="swui-detail">
+    <dt>ID</dt>
+    <dd><%= @job.id %></dd>
+
+    <dt>Job</dt>
+    <dd><%= @job.class_name %></dd>
+
+    <dt>Queue</dt>
+    <dd><%= @job.queue_name %></dd>
+
+    <dt>Status</dt>
+    <dd><%= swui_status_badge(label: job_status(@job).to_s.humanize, status: job_status(@job)) %></dd>
+
+    <dt>Priority</dt>
+    <dd><%= @job.priority %></dd>
+
+    <dt>Active Job ID</dt>
+    <dd><code><%= @job.active_job_id || "—" %></code></dd>
+
+    <dt>Enqueued</dt>
+    <dd><%= short_time(@job.created_at) %></dd>
+
+    <dt>Scheduled</dt>
+    <dd><%= short_time(@job.scheduled_at) %></dd>
+
+    <dt>Finished</dt>
+    <dd><%= short_time(@job.finished_at) %></dd>
+
+    <dt>Duration<% if @job.finished_at? %> <span class="swui-detail__hint">(enqueue → finish)</span><% end %></dt>
+    <dd><%= job_duration(@job) || "—" %></dd>
+
+    <dt>Arguments</dt>
+    <dd><pre class="swui-codeblock"><%= JSON.pretty_generate(@job.arguments) rescue @job.arguments.inspect %></pre></dd>
+  </dl>
+
+  <% if (failed = @job.failed_execution) %>
+    <h2 class="swui-section-title">Error</h2>
+    <dl class="swui-detail">
+      <dt>Exception</dt>
+      <dd><%= swui_status_badge(label: failed.exception_class.to_s, status: :failed) %></dd>
+
+      <dt>Message</dt>
+      <dd><%= failed.message %></dd>
+
+      <dt>Failed at</dt>
+      <dd><%= short_time(failed.created_at) %></dd>
+
+      <dt>Backtrace</dt>
+      <dd>
+        <% if failed.backtrace.present? %>
+          <pre class="swui-codeblock"><%= Array(failed.backtrace).join("\n") %></pre>
+        <% else %>
+          —
+        <% end %>
+      </dd>
+    </dl>
+  <% end %>
+<% end %>

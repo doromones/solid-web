@@ -29,6 +29,34 @@ module SolidWebUi::Queue
       queue.respond_to?(:human_latency) ? queue.human_latency : queue.latency
     end
 
+    # Best available execution time for a job. Solid Queue does not persist a job's
+    # start time once it finishes (the claimed_execution row is deleted on finish),
+    # so:
+    #   - finished job  → finished_at - created_at (total time in the system)
+    #   - claimed job   → now - claimed_execution.created_at (live run time)
+    #   - anything else → nil (no meaningful duration yet)
+    def job_duration(job)
+      if job.finished_at?
+        human_duration(job.finished_at - job.created_at)
+      elsif job.claimed_execution
+        human_duration(Time.current - job.claimed_execution.created_at)
+      end
+    end
+
+    # Compact, sub-minute-precise duration: "1.2s", "3m 04s", "2h 01m".
+    def human_duration(seconds)
+      return "—" if seconds.nil?
+
+      seconds = seconds.to_f
+      return format("%.1fs", seconds) if seconds < 60
+
+      if seconds < 3600
+        format("%dm %02ds", seconds / 60, seconds % 60)
+      else
+        format("%dh %02dm", seconds / 3600, (seconds % 3600) / 60)
+      end
+    end
+
     def short_time(time)
       return "—" if time.nil?
 

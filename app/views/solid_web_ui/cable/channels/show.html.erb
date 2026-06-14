@@ -1,0 +1,35 @@
+<% title = readable_channel(@name) %>
+<% content_for :title, "Channel #{title}" %>
+<%= swui_page(title: "Channel", nav: cable_nav(:channels), refresh: false) do %>
+  <%= link_to "← Back to channels", channels_path, class: "swui-back" %>
+
+  <dl class="swui-detail">
+    <dt>Channel</dt>
+    <dd><code><%= readable_channel(@name, length: 1024) %></code></dd>
+
+    <dt>Channel hash</dt>
+    <dd><code><%= @channel_hash %></code></dd>
+
+    <dt>Messages</dt>
+    <dd><%= number_with_delimiter(@count) %></dd>
+
+    <dt>First activity</dt>
+    <dd><%= short_time(@first) %></dd>
+
+    <dt>Last activity</dt>
+    <dd><%= short_time(@last) %></dd>
+  </dl>
+
+  <h2 class="swui-section-title">Recent messages</h2>
+  <%= swui_table(headers: [ "ID", "Payload", "Created" ], empty_message: "No messages.") do %>
+    <% @messages.each do |message| %>
+      <tr>
+        <td><%= message.id %></td>
+        <td><code><%= readable_payload(message.payload) %></code></td>
+        <td><%= short_time(message.created_at) %></td>
+      </tr>
+    <% end %>
+  <% end %>
+
+  <%= swui_paginator(paginator: @paginator, page_url: ->(page) { channel_path(@channel_hash, page: page) }) %>
+<% end %>
