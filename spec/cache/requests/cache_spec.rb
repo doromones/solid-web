@@ -44,6 +44,92 @@ RSpec.describe "SolidWebUi::Cache", type: :request do
     end
   end
 
+  describe "creating entries" do
+    it "renders the new-entry form" do
+      get "/admin/solid_cache/entries/new"
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("New cache entry", "swui-form")
+    end
+
+    it "creates an entry" do
+      post "/admin/solid_cache/entries", params: { key: "greeting", value: "hello" }
+
+      expect(response).to redirect_to("/admin/solid_cache/entries")
+      expect(SolidCache::Entry.read("greeting")).to eq("hello")
+    end
+
+    it "rejects a blank key" do
+      post "/admin/solid_cache/entries", params: { key: "", value: "x" }
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(SolidCache::Entry.count).to eq(0)
+    end
+
+    it "rejects a duplicate key" do
+      SolidCache::Entry.write("dup", "first")
+
+      post "/admin/solid_cache/entries", params: { key: "dup", value: "second" }
+
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(SolidCache::Entry.read("dup")).to eq("first")
+    end
+
+    it "is forbidden when creation is disabled" do
+      SolidWebUi::Cache.config.enable_create = false
+      post "/admin/solid_cache/entries", params: { key: "k", value: "v" }
+      expect(response).to have_http_status(:forbidden)
+    ensure
+      SolidWebUi::Cache.config.enable_create = true
+    end
+  end
+
+  describe "editing entries" do
+    it "updates the value" do
+      SolidCache::Entry.write("k", "old")
+      entry = SolidCache::Entry.order(:id).last
+
+      patch "/admin/solid_cache/entries/#{entry.id}", params: { value: "new" }
+
+      expect(response).to redirect_to("/admin/solid_cache/entries/#{entry.id}")
+      expect(SolidCache::Entry.read("k")).to eq("new")
+    end
+
+    it "is forbidden when editing is disabled" do
+      SolidCache::Entry.write("k", "v")
+      entry = SolidCache::Entry.order(:id).last
+      SolidWebUi::Cache.config.enable_edit = false
+
+      patch "/admin/solid_cache/entries/#{entry.id}", params: { value: "x" }
+      expect(response).to have_http_status(:forbidden)
+    ensure
+      SolidWebUi::Cache.config.enable_edit = true
+    end
+  end
+
+  describe "deleting an entry" do
+    it "destroys the entry" do
+      SolidCache::Entry.write("k", "v")
+      entry = SolidCache::Entry.order(:id).last
+
+      delete "/admin/solid_cache/entries/#{entry.id}"
+
+      expect(response).to redirect_to("/admin/solid_cache/entries")
+      expect(SolidCache::Entry.exists?(entry.id)).to be(false)
+    end
+
+    it "is forbidden when deletion is disabled" do
+      SolidCache::Entry.write("k", "v")
+      entry = SolidCache::Entry.order(:id).last
+      SolidWebUi::Cache.config.enable_delete = false
+
+      delete "/admin/solid_cache/entries/#{entry.id}"
+      expect(response).to have_http_status(:forbidden)
+    ensure
+      SolidWebUi::Cache.config.enable_delete = true
+    end
+  end
+
   describe "DELETE /entries (clear)" do
     it "clears the cache when enabled" do
       create_entry(key: "k", bytes: 10, hash: 7)

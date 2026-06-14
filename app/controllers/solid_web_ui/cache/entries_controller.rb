@@ -2,7 +2,11 @@
 
 module SolidWebUi::Cache
   class EntriesController < ApplicationController
-    before_action :ensure_clear_enabled, only: :clear
+    before_action :ensure_clear_enabled,  only: :clear
+    before_action :ensure_create_enabled, only: %i[new create]
+    before_action :ensure_edit_enabled,   only: %i[edit update]
+    before_action :ensure_delete_enabled, only: :destroy
+    before_action :set_entry, only: %i[show edit update destroy]
 
     def index
       scope = SolidCache::Entry.order(id: :desc)
@@ -10,8 +14,44 @@ module SolidWebUi::Cache
       @entries = @paginator.records
     end
 
-    def show
-      @entry = SolidCache::Entry.find(params[:id])
+    def show; end
+
+    def new
+      @key = ""
+      @value = ""
+    end
+
+    def create
+      @key = params[:key].to_s
+      @value = params[:value].to_s
+
+      if @key.empty?
+        flash.now[:alert] = "Key can't be blank."
+        return render :new, status: :unprocessable_entity
+      end
+      if SolidCache::Entry.read(@key)
+        flash.now[:alert] = "An entry with that key already exists."
+        return render :new, status: :unprocessable_entity
+      end
+
+      SolidCache::Entry.write(@key, @value)
+      redirect_to entries_path, notice: "Entry created."
+    end
+
+    def edit
+      @key = @entry.key.to_s.dup.force_encoding("UTF-8")
+      @value = @entry.value.to_s.dup.force_encoding("UTF-8")
+    end
+
+    def update
+      @value = params[:value].to_s
+      SolidCache::Entry.write(@entry.key, @value)
+      redirect_to entry_path(@entry), notice: "Entry updated."
+    end
+
+    def destroy
+      @entry.destroy
+      redirect_to entries_path, notice: "Entry deleted."
     end
 
     def clear
@@ -21,8 +61,24 @@ module SolidWebUi::Cache
 
     private
 
+    def set_entry
+      @entry = SolidCache::Entry.find(params[:id])
+    end
+
     def ensure_clear_enabled
       head :forbidden unless SolidWebUi::Cache.config.enable_clear
+    end
+
+    def ensure_create_enabled
+      head :forbidden unless SolidWebUi::Cache.config.enable_create
+    end
+
+    def ensure_edit_enabled
+      head :forbidden unless SolidWebUi::Cache.config.enable_edit
+    end
+
+    def ensure_delete_enabled
+      head :forbidden unless SolidWebUi::Cache.config.enable_delete
     end
   end
 end

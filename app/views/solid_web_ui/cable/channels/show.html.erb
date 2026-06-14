@@ -23,8 +23,8 @@
   <h2 class="swui-section-title">Recent messages</h2>
   <%= swui_table(headers: [ "ID", "Payload", "Created" ], empty_message: "No messages.") do %>
     <% @messages.each do |message| %>
-      <tr>
-        <td><%= message.id %></td>
+      <tr data-swui-row-href="<%= message_path(message) %>">
+        <td><%= link_to message.id, message_path(message) %></td>
         <td><code><%= readable_payload(message.payload) %></code></td>
         <td><%= short_time(message.created_at) %></td>
       </tr>

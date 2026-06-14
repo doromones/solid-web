@@ -1,5 +1,11 @@
 <% content_for :title, "Cache entries" %>
 <%= swui_page(title: "Cache entries", nav: cache_nav(:entries)) do %>
+  <% if SolidWebUi::Cache.config.enable_create %>
+    <div class="swui-actions">
+      <%= link_to "+ New entry", new_entry_path, class: "swui-btn", data: { turbo_frame: "_top" } %>
+    </div>
+  <% end %>
+
   <%= swui_table(headers: [ "ID", "Key", "Size", "Created" ], empty_message: "The cache is empty.") do %>
     <% @entries.each do |entry| %>
       <tr data-swui-row-href="<%= entry_path(entry) %>">

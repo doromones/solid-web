@@ -11,6 +11,9 @@ module SolidWebUi
     config.page_title = "Solid Cache"
 
     setting :enable_clear, default: true
+    setting :enable_create, default: true
+    setting :enable_edit, default: true
+    setting :enable_delete, default: true
   end
 end
 

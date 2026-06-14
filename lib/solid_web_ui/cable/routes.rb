@@ -5,4 +5,5 @@ SolidWebUi::Cable::Engine.routes.draw do
   get "channels", to: "channels#index", as: :channels
   get "channels/:channel_hash", to: "channels#show", as: :channel
   delete "messages/trim", to: "messages#trim", as: :trim_messages
+  get "messages/:id", to: "messages#show", as: :message
 end

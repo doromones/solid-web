@@ -1,0 +1,23 @@
+<%= form_with url: url, method: method, class: "swui-form" do |f| %>
+  <div class="swui-field">
+    <label class="swui-label" for="entry_key">Key</label>
+    <% if new_record %>
+      <%= text_field_tag :key, key, id: "entry_key", class: "swui-input", autocomplete: "off" %>
+    <% else %>
+      <input id="entry_key" class="swui-input" value="<%= key %>" disabled>
+      <p class="swui-hint">The key identifies the entry and can't be changed — delete and recreate to rename.</p>
+    <% end %>
+  </div>
+
+  <div class="swui-field">
+    <label class="swui-label" for="entry_value">Value</label>
+    <%= text_area_tag :value, value, id: "entry_value", class: "swui-textarea", rows: 14 %>
+    <p class="swui-hint">Stored as raw bytes. Editing a serialized or compressed cache value to arbitrary
+      text may make it unreadable by <code>Rails.cache</code>.</p>
+  </div>
+
+  <div class="swui-form__actions">
+    <%= f.submit(new_record ? "Create entry" : "Save changes", class: "swui-btn") %>
+    <%= link_to "Cancel", cancel_url, class: "swui-btn" %>
+  </div>
+<% end %>

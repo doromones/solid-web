@@ -21,4 +21,14 @@
     <dt>Value</dt>
     <dd><pre class="swui-codeblock"><%= readable_value(@entry.value) %></pre></dd>
   </dl>
+
+  <div class="swui-actions">
+    <% if SolidWebUi::Cache.config.enable_edit %>
+      <%= link_to "Edit", edit_entry_path(@entry), class: "swui-btn", data: { turbo_frame: "_top" } %>
+    <% end %>
+    <% if SolidWebUi::Cache.config.enable_delete %>
+      <%= swui_action_button(label: "Delete", url: entry_path(@entry), method: :delete,
+                             danger: true, confirm: "Delete this cache entry?") %>
+    <% end %>
+  </div>
 <% end %>

@@ -340,6 +340,92 @@
     opacity: 0.8;
   }
 
+  /* Flash messages ----------------------------------------------------- */
+  .solid-web-ui .swui-flash {
+    padding: 0.6rem 0.85rem;
+    margin-bottom: 1rem;
+    border: 1px solid var(--swui-color-border);
+    border-radius: var(--swui-radius);
+    font-size: 0.9rem;
+  }
+
+  .solid-web-ui .swui-flash--notice {
+    border-color: var(--swui-color-success);
+    background: color-mix(in srgb, var(--swui-color-success) 14%, transparent);
+  }
+
+  .solid-web-ui .swui-flash--alert {
+    border-color: var(--swui-color-danger);
+    background: color-mix(in srgb, var(--swui-color-danger) 14%, transparent);
+  }
+
+  /* Action toolbar ----------------------------------------------------- */
+  .solid-web-ui .swui-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  /* Forms -------------------------------------------------------------- */
+  .solid-web-ui .swui-form {
+    max-width: 48rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .solid-web-ui .swui-field { margin-bottom: 1rem; }
+
+  .solid-web-ui .swui-label {
+    display: block;
+    margin-bottom: 0.35rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--swui-color-muted);
+  }
+
+  .solid-web-ui .swui-input,
+  .solid-web-ui .swui-textarea {
+    width: 100%;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid var(--swui-color-border);
+    border-radius: var(--swui-radius);
+    background: var(--swui-color-surface);
+    color: var(--swui-color-text);
+    font: inherit;
+    font-size: 0.9rem;
+  }
+
+  .solid-web-ui .swui-textarea {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    line-height: 1.45;
+    resize: vertical;
+  }
+
+  .solid-web-ui .swui-input:focus,
+  .solid-web-ui .swui-textarea:focus {
+    outline: none;
+    border-color: var(--swui-color-primary);
+  }
+
+  .solid-web-ui .swui-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  .solid-web-ui .swui-hint {
+    margin: 0.35rem 0 0;
+    font-size: 0.8rem;
+    color: var(--swui-color-muted);
+  }
+
+  .solid-web-ui .swui-form__actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+  }
+
   /* Code / backtrace block --------------------------------------------- */
   .solid-web-ui .swui-codeblock {
     margin: 0;
