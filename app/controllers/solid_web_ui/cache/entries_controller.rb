@@ -148,12 +148,13 @@ module SolidWebUi::Cache
       ActiveSupport::TimeZone[SolidWebUi::Cache.config.time_zone] || ActiveSupport::TimeZone["UTC"]
     end
 
-    # Absolute epoch on the decoded entry -> a string in the dashboard's time zone.
+    # Absolute epoch on the decoded entry -> a datetime-local value (YYYY-MM-DDThh:mm:ss)
+    # in the dashboard's time zone.
     def format_expires_at(decoded)
       epoch = decoded.expires_at if decoded.respond_to?(:expires_at)
       return "" unless epoch
 
-      Time.at(epoch).in_time_zone(cache_time_zone).strftime("%Y-%m-%d %H:%M:%S")
+      Time.at(epoch).in_time_zone(cache_time_zone).strftime("%Y-%m-%dT%H:%M:%S")
     end
 
     # Form string (in the dashboard's time zone) -> a Time, or nil for "no expiry".

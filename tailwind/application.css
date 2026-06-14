@@ -35,6 +35,12 @@
     box-sizing: border-box;
   }
 
+  /* Hint native form controls (datetime pickers, select menus, scrollbars) to
+     match the dashboard's scheme so they stay legible in dark mode. */
+  .solid-web-ui[data-color-scheme="light"] { color-scheme: light; }
+  .solid-web-ui[data-color-scheme="dark"]  { color-scheme: dark; }
+  .solid-web-ui[data-color-scheme="auto"]  { color-scheme: light dark; }
+
   /* Page chrome -------------------------------------------------------- */
   .solid-web-ui .swui-page {
     max-width: var(--swui-page-max-width, 72rem);

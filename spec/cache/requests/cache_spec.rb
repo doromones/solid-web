@@ -13,8 +13,8 @@ RSpec.describe "SolidWebUi::Cache", type: :request do
     @cache_store ||= ActiveSupport::Cache.lookup_store(:solid_cache_store)
   end
 
-  def seed_cache(key, value)
-    cache_store.write(key, value)
+  def seed_cache(key, value, **opts)
+    cache_store.write(key, value, **opts)
     SolidCache::Entry.order(:id).last
   end
 
@@ -137,12 +137,15 @@ RSpec.describe "SolidWebUi::Cache", type: :request do
 
   describe "editing entries" do
     it "renders an editable form for a plain-string value with metadata fields" do
-      entry = seed_cache("k", "editable text")
+      entry = seed_cache("k", "editable text", expires_in: 1.hour)
 
       get "/admin/solid_cache/entries/#{entry.id}/edit"
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include("editable text", "Save changes", "Expires at", "Version")
+      expect(response.body).to include('type="datetime-local"')
+      # prefilled expiry uses the datetime-local format (ISO "T" separator)
+      expect(response.body).to match(/value="\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}"/)
     end
 
     it "shows a non-string value read-only but still allows metadata editing" do

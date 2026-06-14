@@ -8,6 +8,24 @@
   .static {
     position: static;
   }
+  .container {
+    width: 100%;
+    @media (width >= 40rem) {
+      max-width: 40rem;
+    }
+    @media (width >= 48rem) {
+      max-width: 48rem;
+    }
+    @media (width >= 64rem) {
+      max-width: 64rem;
+    }
+    @media (width >= 80rem) {
+      max-width: 80rem;
+    }
+    @media (width >= 96rem) {
+      max-width: 96rem;
+    }
+  }
   .block {
     display: block;
   }
@@ -34,6 +52,15 @@
   }
   .solid-web-ui *, .solid-web-ui *::before, .solid-web-ui *::after {
     box-sizing: border-box;
+  }
+  .solid-web-ui[data-color-scheme="light"] {
+    color-scheme: light;
+  }
+  .solid-web-ui[data-color-scheme="dark"] {
+    color-scheme: dark;
+  }
+  .solid-web-ui[data-color-scheme="auto"] {
+    color-scheme: light dark;
   }
   .solid-web-ui .swui-page {
     max-width: var(--swui-page-max-width, 72rem);
