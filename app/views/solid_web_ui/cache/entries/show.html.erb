@@ -18,9 +18,14 @@
     <dt>Created</dt>
     <dd><%= short_time(@entry.created_at) %></dd>
 
-    <% if @decoded.respond_to?(:expires_at) && @decoded.expires_at %>
+    <% if @decoded.respond_to?(:expires_at) %>
       <dt>Expires</dt>
-      <dd><%= short_time(Time.at(@decoded.expires_at)) %></dd>
+      <dd><%= @decoded.expires_at ? short_time(Time.at(@decoded.expires_at)) : "Never" %></dd>
+    <% end %>
+
+    <% if @decoded.respond_to?(:version) %>
+      <dt>Version</dt>
+      <dd><%= @decoded.version.presence || "—" %></dd>
     <% end %>
 
     <dt>Value<% unless @decoded.respond_to?(:value) %> <span class="swui-detail__hint">(raw — undecodable)</span><% end %></dt>

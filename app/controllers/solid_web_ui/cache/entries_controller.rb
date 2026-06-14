@@ -21,51 +21,62 @@ module SolidWebUi::Cache
     def new
       @key = ""
       @value = ""
+      @expires_at = ""
+      @version = ""
     end
 
     def create
       @key = params[:key].to_s
       @value = params[:value].to_s
+      @expires_at = params[:expires_at].to_s
+      @version = params[:version].to_s
 
       if @key.empty?
-        flash.now[:alert] = "Key can't be blank."
-        return render :new, status: :unprocessable_entity
-      end
-      if SolidCache::Entry.read(@key)
-        flash.now[:alert] = "An entry with that key already exists."
-        return render :new, status: :unprocessable_entity
+        return render_new_error("Key can't be blank.")
+      elsif SolidCache::Entry.read(@key)
+        return render_new_error("An entry with that key already exists.")
       end
 
-      SolidCache::Entry.write(@key, encode_value(@value))
+      expires_at = parse_expires_at(@expires_at)
+      SolidCache::Entry.write(@key, encode_entry(@value, version: @version.presence, expires_at: expires_at))
       redirect_to entries_path, notice: "Entry created."
+    rescue InvalidExpiry
+      render_new_error("Couldn't parse the expiry time.")
     end
 
     def edit
       decoded = decode_value(@entry.value)
-      @editable = editable_value?(decoded)
+      @value_editable = editable_value?(decoded)
+      @meta_editable = decoded.respond_to?(:value)
       @key = scrub_for_display(@entry.key)
+      @expires_at = format_expires_at(decoded)
+      @version = (decoded.version if decoded.respond_to?(:version)).to_s
 
-      if @editable
+      if @value_editable
         @value = decoded.value
-      elsif decoded.respond_to?(:value)
+      elsif @meta_editable
         @value = decoded.value.inspect
-        @note = "This entry holds a #{decoded.value.class} (not a plain string), so it can't be " \
-                "edited as text here. Delete it, or change it from your application."
+        @note = "This entry holds a #{decoded.value.class} (not a plain string), so the value is " \
+                "read-only — but you can still change its metadata below."
       else
         @value = scrub_for_display(@entry.value)
         @note = "This value couldn't be decoded as a cache entry (it may use a different cache " \
-                "format), so it can't be safely edited here."
+                "format), so it can't be edited here."
       end
     end
 
     def update
       decoded = decode_value(@entry.value)
-      unless editable_value?(decoded)
-        return redirect_to edit_entry_path(@entry), alert: "This entry can't be edited as text."
+      unless decoded.respond_to?(:value)
+        return redirect_to edit_entry_path(@entry), alert: "This entry can't be edited."
       end
 
-      SolidCache::Entry.write(@entry.key, encode_value(params[:value].to_s, like: decoded))
+      value = decoded.value.is_a?(String) ? params[:value].to_s : decoded.value
+      expires_at = parse_expires_at(params[:expires_at])
+      SolidCache::Entry.write(@entry.key, encode_entry(value, version: params[:version].presence, expires_at: expires_at))
       redirect_to entry_path(@entry), notice: "Entry updated."
+    rescue InvalidExpiry
+      redirect_to edit_entry_path(@entry), alert: "Couldn't parse the expiry time."
     end
 
     def destroy
@@ -80,8 +91,15 @@ module SolidWebUi::Cache
 
     private
 
+    InvalidExpiry = Class.new(StandardError)
+
     def set_entry
       @entry = SolidCache::Entry.find(params[:id])
+    end
+
+    def render_new_error(message)
+      flash.now[:alert] = message
+      render :new, status: :unprocessable_entity
     end
 
     # Only plain-string cache values can round-trip through a textarea.
@@ -108,17 +126,31 @@ module SolidWebUi::Cache
       nil
     end
 
-    # A logical string value -> serialized cache-entry bytes, preserving the version
-    # and remaining TTL of the entry it replaces when present.
-    def encode_value(string, like: nil)
-      options = {}
-      options[:version] = like.version if like.respond_to?(:version) && like.version
-      if like.respond_to?(:expires_at) && like.expires_at
-        remaining = like.expires_at - Time.now.to_f
-        options[:expires_in] = remaining if remaining.positive?
-      end
+    # A value + metadata -> serialized cache-entry bytes.
+    def encode_entry(value, version:, expires_at:)
+      entry = ActiveSupport::Cache::Entry.new(value, version: version, expires_at: expires_at)
+      cache_store.send(:serialize_entry, entry)
+    end
 
-      cache_store.send(:serialize_entry, ActiveSupport::Cache::Entry.new(string, **options))
+    def cache_time_zone
+      ActiveSupport::TimeZone[SolidWebUi::Cache.config.time_zone] || ActiveSupport::TimeZone["UTC"]
+    end
+
+    # Absolute epoch on the decoded entry -> a string in the dashboard's time zone.
+    def format_expires_at(decoded)
+      epoch = decoded.expires_at if decoded.respond_to?(:expires_at)
+      return "" unless epoch
+
+      Time.at(epoch).in_time_zone(cache_time_zone).strftime("%Y-%m-%d %H:%M:%S")
+    end
+
+    # Form string (in the dashboard's time zone) -> a Time, or nil for "no expiry".
+    def parse_expires_at(str)
+      return nil if str.blank?
+
+      cache_time_zone.parse(str) || raise(InvalidExpiry)
+    rescue ArgumentError
+      raise InvalidExpiry
     end
 
     def scrub_for_display(bytes)

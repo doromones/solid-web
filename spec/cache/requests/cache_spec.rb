@@ -69,6 +69,16 @@ RSpec.describe "SolidWebUi::Cache", type: :request do
       expect(cache_store.read("greeting")).to eq("hello")
     end
 
+    it "creates an entry with expiry and version metadata" do
+      post "/admin/solid_cache/entries",
+           params: { key: "greeting", value: "hello", expires_at: "2027-03-04 05:06:07", version: "v1" }
+
+      entry = SolidCache::Entry.order(:id).last
+      decoded = cache_store.send(:deserialize_entry, entry.value)
+      expect(Time.at(decoded.expires_at).utc.strftime("%Y-%m-%d %H:%M:%S")).to eq("2027-03-04 05:06:07")
+      expect(cache_store.read("greeting", version: "v1")).to eq("hello")
+    end
+
     it "rejects a blank key" do
       post "/admin/solid_cache/entries", params: { key: "", value: "x" }
 
@@ -95,23 +105,22 @@ RSpec.describe "SolidWebUi::Cache", type: :request do
   end
 
   describe "editing entries" do
-    it "renders an editable form for a plain-string value" do
+    it "renders an editable form for a plain-string value with metadata fields" do
       entry = seed_cache("k", "editable text")
 
       get "/admin/solid_cache/entries/#{entry.id}/edit"
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("editable text", "Save changes")
+      expect(response.body).to include("editable text", "Save changes", "Expires at", "Version")
     end
 
-    it "shows a non-string value as read-only" do
+    it "shows a non-string value read-only but still allows metadata editing" do
       entry = seed_cache("h", { "a" => 1 })
 
       get "/admin/solid_cache/entries/#{entry.id}/edit"
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("not a plain string")
-      expect(response.body).not_to include("Save changes")
+      expect(response.body).to include("read-only", "Save changes", "Expires at")
     end
 
     it "shows an undecodable value as read-only without crashing" do
@@ -135,13 +144,35 @@ RSpec.describe "SolidWebUi::Cache", type: :request do
       expect(cache_store.read("k")).to eq("new")
     end
 
-    it "refuses to overwrite a non-string value from the form" do
+    it "edits expiry and version metadata" do
+      entry = seed_cache("k", "v")
+
+      patch "/admin/solid_cache/entries/#{entry.id}",
+            params: { value: "v", expires_at: "2027-03-04 05:06:07", version: "v2" }
+
+      expect(response).to redirect_to("/admin/solid_cache/entries/#{entry.id}")
+      decoded = cache_store.send(:deserialize_entry, entry.reload.value)
+      expect(Time.at(decoded.expires_at).utc.strftime("%Y-%m-%d %H:%M:%S")).to eq("2027-03-04 05:06:07")
+      expect(cache_store.read("k", version: "v2")).to eq("v")
+      expect(cache_store.read("k", version: "wrong")).to be_nil
+    end
+
+    it "preserves a non-string value while editing only its metadata" do
       entry = seed_cache("h", { "a" => 1 })
 
-      patch "/admin/solid_cache/entries/#{entry.id}", params: { value: "nope" }
+      patch "/admin/solid_cache/entries/#{entry.id}", params: { value: "ignored", version: "v9" }
+
+      expect(response).to redirect_to("/admin/solid_cache/entries/#{entry.id}")
+      expect(cache_store.read("h", version: "v9")).to eq({ "a" => 1 })
+    end
+
+    it "rejects an unparseable expiry" do
+      entry = seed_cache("k", "keep")
+
+      patch "/admin/solid_cache/entries/#{entry.id}", params: { value: "x", expires_at: "not-a-date" }
 
       expect(response).to redirect_to("/admin/solid_cache/entries/#{entry.id}/edit")
-      expect(cache_store.read("h")).to eq({ "a" => 1 })
+      expect(cache_store.read("k")).to eq("keep")
     end
 
     it "is forbidden when editing is disabled" do

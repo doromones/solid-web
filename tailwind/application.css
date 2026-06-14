@@ -375,6 +375,17 @@
 
   .solid-web-ui .swui-field { margin-bottom: 1rem; }
 
+  .solid-web-ui .swui-fieldset {
+    margin: 0 0 1rem;
+    padding: 1rem 1.1rem 0.25rem;
+    border: 1px solid var(--swui-color-border);
+    border-radius: var(--swui-radius);
+  }
+
+  .solid-web-ui .swui-fieldset legend {
+    padding: 0 0.4rem;
+  }
+
   .solid-web-ui .swui-label {
     display: block;
     margin-bottom: 0.35rem;

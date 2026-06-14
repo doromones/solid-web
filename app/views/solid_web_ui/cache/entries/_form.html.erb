@@ -14,15 +14,32 @@
     <% if note %>
       <div class="swui-flash swui-flash--alert"><%= note %></div>
     <% end %>
-    <%= text_area_tag :value, value, id: "entry_value", class: "swui-textarea", rows: 14, disabled: !editable %>
-    <% if editable %>
+    <%= text_area_tag :value, value, id: "entry_value", class: "swui-textarea", rows: 12, disabled: !value_editable %>
+    <% if value_editable %>
       <p class="swui-hint">Saved through the cache encoder, so <code>Rails.cache</code> reads it back
         as a string.</p>
     <% end %>
   </div>
 
+  <fieldset class="swui-fieldset">
+    <legend class="swui-label">Metadata</legend>
+    <div class="swui-field">
+      <label class="swui-label" for="entry_expires_at">Expires at</label>
+      <%= text_field_tag :expires_at, expires_at, id: "entry_expires_at", class: "swui-input",
+                         placeholder: "YYYY-MM-DD HH:MM:SS", autocomplete: "off", disabled: !meta_editable %>
+      <p class="swui-hint">Time zone <code><%= SolidWebUi::Cache.config.time_zone %></code>. Leave blank for no expiry.</p>
+    </div>
+
+    <div class="swui-field">
+      <label class="swui-label" for="entry_version">Version</label>
+      <%= text_field_tag :version, version, id: "entry_version", class: "swui-input",
+                         autocomplete: "off", disabled: !meta_editable %>
+      <p class="swui-hint">Used by <code>Rails.cache</code>'s <code>:version</code> option. Leave blank for none.</p>
+    </div>
+  </fieldset>
+
   <div class="swui-form__actions">
-    <% if editable %>
+    <% if meta_editable %>
       <%= f.submit(new_record ? "Create entry" : "Save changes", class: "swui-btn") %>
     <% end %>
     <%= link_to "Cancel", cancel_url, class: "swui-btn" %>
