@@ -14,7 +14,9 @@ module SolidWebUi::Cache
       @entries = @paginator.records
     end
 
-    def show; end
+    def show
+      @decoded = decode_value(@entry.value)
+    end
 
     def new
       @key = ""
@@ -34,20 +36,35 @@ module SolidWebUi::Cache
         return render :new, status: :unprocessable_entity
       end
 
-      SolidCache::Entry.write(@key, @value)
+      SolidCache::Entry.write(@key, encode_value(@value))
       redirect_to entries_path, notice: "Entry created."
     end
 
     def edit
-      raw = @entry.value.to_s
-      @binary = !raw.dup.force_encoding("UTF-8").valid_encoding?
+      decoded = decode_value(@entry.value)
+      @editable = editable_value?(decoded)
       @key = scrub_for_display(@entry.key)
-      @value = scrub_for_display(raw)
+
+      if @editable
+        @value = decoded.value
+      elsif decoded.respond_to?(:value)
+        @value = decoded.value.inspect
+        @note = "This entry holds a #{decoded.value.class} (not a plain string), so it can't be " \
+                "edited as text here. Delete it, or change it from your application."
+      else
+        @value = scrub_for_display(@entry.value)
+        @note = "This value couldn't be decoded as a cache entry (it may use a different cache " \
+                "format), so it can't be safely edited here."
+      end
     end
 
     def update
-      @value = params[:value].to_s
-      SolidCache::Entry.write(@entry.key, @value)
+      decoded = decode_value(@entry.value)
+      unless editable_value?(decoded)
+        return redirect_to edit_entry_path(@entry), alert: "This entry can't be edited as text."
+      end
+
+      SolidCache::Entry.write(@entry.key, encode_value(params[:value].to_s, like: decoded))
       redirect_to entry_path(@entry), notice: "Entry updated."
     end
 
@@ -67,8 +84,43 @@ module SolidWebUi::Cache
       @entry = SolidCache::Entry.find(params[:id])
     end
 
-    # Cache keys/values are binary; force to UTF-8 and replace any invalid bytes
-    # so they can be rendered in a form field without raising.
+    # Only plain-string cache values can round-trip through a textarea.
+    def editable_value?(decoded)
+      decoded.respond_to?(:value) && decoded.value.is_a?(String)
+    end
+
+    # The cache store whose coder matches how these entries were written. Prefer the
+    # host's Rails.cache when it is the Solid Cache store (exact format match), and
+    # fall back to a default Solid Cache store otherwise.
+    def cache_store
+      @cache_store ||=
+        if defined?(SolidCache::Store) && Rails.cache.is_a?(SolidCache::Store)
+          Rails.cache
+        else
+          ActiveSupport::Cache.lookup_store(:solid_cache_store)
+        end
+    end
+
+    # Raw stored bytes -> ActiveSupport::Cache::Entry (or nil if undecodable).
+    def decode_value(raw)
+      cache_store.send(:deserialize_entry, raw.to_s)
+    rescue StandardError
+      nil
+    end
+
+    # A logical string value -> serialized cache-entry bytes, preserving the version
+    # and remaining TTL of the entry it replaces when present.
+    def encode_value(string, like: nil)
+      options = {}
+      options[:version] = like.version if like.respond_to?(:version) && like.version
+      if like.respond_to?(:expires_at) && like.expires_at
+        remaining = like.expires_at - Time.now.to_f
+        options[:expires_in] = remaining if remaining.positive?
+      end
+
+      cache_store.send(:serialize_entry, ActiveSupport::Cache::Entry.new(string, **options))
+    end
+
     def scrub_for_display(bytes)
       bytes.to_s.dup.force_encoding("UTF-8").scrub("?")
     end

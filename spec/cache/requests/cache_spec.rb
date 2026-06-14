@@ -7,6 +7,17 @@ RSpec.describe "SolidWebUi::Cache", type: :request do
     SolidCache::Entry.create!(key: key, value: "x" * bytes, byte_size: bytes, key_hash: hash)
   end
 
+  # Write through the cache store so the stored bytes are a real cache envelope,
+  # exactly as the host app's Rails.cache would produce them.
+  def cache_store
+    @cache_store ||= ActiveSupport::Cache.lookup_store(:solid_cache_store)
+  end
+
+  def seed_cache(key, value)
+    cache_store.write(key, value)
+    SolidCache::Entry.order(:id).last
+  end
+
   describe "GET / (dashboard)" do
     it "renders cache statistics in the shared layout" do
       create_entry(key: "users/1", bytes: 100, hash: 1)
@@ -33,9 +44,8 @@ RSpec.describe "SolidWebUi::Cache", type: :request do
   end
 
   describe "GET /entries/:id (show)" do
-    it "renders the full key and a value preview" do
-      entry = create_entry(key: "users/7/profile", bytes: 12, hash: 123)
-      entry.update!(value: "hello-cached-value")
+    it "renders the key and the decoded value" do
+      entry = seed_cache("users/7/profile", "hello-cached-value")
 
       get "/admin/solid_cache/entries/#{entry.id}"
 
@@ -52,11 +62,11 @@ RSpec.describe "SolidWebUi::Cache", type: :request do
       expect(response.body).to include("New cache entry", "swui-form")
     end
 
-    it "creates an entry" do
+    it "creates an entry readable through the cache" do
       post "/admin/solid_cache/entries", params: { key: "greeting", value: "hello" }
 
       expect(response).to redirect_to("/admin/solid_cache/entries")
-      expect(SolidCache::Entry.read("greeting")).to eq("hello")
+      expect(cache_store.read("greeting")).to eq("hello")
     end
 
     it "rejects a blank key" do
@@ -85,40 +95,57 @@ RSpec.describe "SolidWebUi::Cache", type: :request do
   end
 
   describe "editing entries" do
-    it "renders the edit form for a text value" do
-      SolidCache::Entry.write("k", "editable text")
-      entry = SolidCache::Entry.order(:id).last
+    it "renders an editable form for a plain-string value" do
+      entry = seed_cache("k", "editable text")
 
       get "/admin/solid_cache/entries/#{entry.id}/edit"
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("editable text", "swui-form")
+      expect(response.body).to include("editable text", "Save changes")
     end
 
-    it "renders the edit form for a binary value without crashing" do
-      blob = (+"\xC3\x28marshal\x00blob").force_encoding(Encoding::BINARY)
+    it "shows a non-string value as read-only" do
+      entry = seed_cache("h", { "a" => 1 })
+
+      get "/admin/solid_cache/entries/#{entry.id}/edit"
+
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include("not a plain string")
+      expect(response.body).not_to include("Save changes")
+    end
+
+    it "shows an undecodable value as read-only without crashing" do
+      blob = (+"\xC3\x28raw\x00bytes").force_encoding(Encoding::BINARY)
       SolidCache::Entry.write("bin", blob)
       entry = SolidCache::Entry.order(:id).last
 
       get "/admin/solid_cache/entries/#{entry.id}/edit"
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include("isn&#39;t valid UTF-8").or include("isn't valid UTF-8")
+      expect(response.body).to include("couldn&#39;t be decoded").or include("couldn't be decoded")
+      expect(response.body).not_to include("Save changes")
     end
 
-    it "updates the value" do
-      SolidCache::Entry.write("k", "old")
-      entry = SolidCache::Entry.order(:id).last
+    it "updates the value, keeping it cache-readable" do
+      entry = seed_cache("k", "old")
 
       patch "/admin/solid_cache/entries/#{entry.id}", params: { value: "new" }
 
       expect(response).to redirect_to("/admin/solid_cache/entries/#{entry.id}")
-      expect(SolidCache::Entry.read("k")).to eq("new")
+      expect(cache_store.read("k")).to eq("new")
+    end
+
+    it "refuses to overwrite a non-string value from the form" do
+      entry = seed_cache("h", { "a" => 1 })
+
+      patch "/admin/solid_cache/entries/#{entry.id}", params: { value: "nope" }
+
+      expect(response).to redirect_to("/admin/solid_cache/entries/#{entry.id}/edit")
+      expect(cache_store.read("h")).to eq({ "a" => 1 })
     end
 
     it "is forbidden when editing is disabled" do
-      SolidCache::Entry.write("k", "v")
-      entry = SolidCache::Entry.order(:id).last
+      entry = seed_cache("k", "v")
       SolidWebUi::Cache.config.enable_edit = false
 
       patch "/admin/solid_cache/entries/#{entry.id}", params: { value: "x" }
