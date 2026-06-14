@@ -37,7 +37,7 @@
 
   /* Page chrome -------------------------------------------------------- */
   .solid-web-ui .swui-page {
-    max-width: 72rem;
+    max-width: var(--swui-page-max-width, 72rem);
     margin-inline: auto;
     padding: 1.5rem;
   }
@@ -342,7 +342,7 @@
 
   /* Flash messages ----------------------------------------------------- */
   .solid-web-ui .swui-flash-region {
-    max-width: 72rem;
+    max-width: var(--swui-page-max-width, 72rem);
     margin-inline: auto;
     padding: 1.5rem 1.5rem 0;
   }

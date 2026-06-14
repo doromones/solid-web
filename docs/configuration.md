@@ -87,7 +87,7 @@ Theming lives on `SolidWebUi.config` and applies to all three dashboards — see
 
 | Setting | Type | Default | Purpose |
 |---------|------|---------|---------|
-| `theme` | Hash | `{}` | Design-token value overrides, e.g. `{ color_primary: "#7c3aed" }`. |
+| `theme` | Hash | `{}` | Design-token value overrides, e.g. `{ color_primary: "#7c3aed" }`. The `page_max_width` token (default `72rem`) caps the centered page column — set it to `"none"` or `"100%"` to let the dashboards fill their container when embedded in a wide host layout. |
 | `color_scheme` | String | `"auto"` | `"auto"` \| `"light"` \| `"dark"`. |
 | `stylesheet` | Boolean | `true` | Link the bundled stylesheet. `false` lets the host style everything. |
 | `extra_stylesheets` | Array | `[]` | Extra Propshaft stylesheet names linked after the bundled one. |
