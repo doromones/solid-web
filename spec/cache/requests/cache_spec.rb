@@ -52,6 +52,26 @@ RSpec.describe "SolidWebUi::Cache", type: :request do
       expect(response.body).to include("Never")          # entry without a TTL
       expect(response.body).to match(/about 1 hour|59 minutes/) # entry with a TTL
     end
+
+    it "renders a per-row delete button" do
+      entry = seed_cache("gone", "v")
+
+      get "/admin/solid_cache/entries"
+
+      expect(response.body).to include("Delete")
+      expect(response.body).to include(%(action="/admin/solid_cache/entries/#{entry.id}"))
+    end
+
+    it "omits the delete button when deletion is disabled" do
+      seed_cache("keep", "v")
+      SolidWebUi::Cache.config.enable_delete = false
+
+      get "/admin/solid_cache/entries"
+
+      expect(response.body).not_to include("Delete")
+    ensure
+      SolidWebUi::Cache.config.enable_delete = true
+    end
   end
 
   describe "GET /entries/:id (show)" do

@@ -6,8 +6,9 @@
     </div>
   <% end %>
 
-  <%= swui_table(headers: [ "ID", "Key", "Size", "Created", "Expires", "Time to expire" ],
-                 empty_message: "The cache is empty.") do %>
+  <% headers = [ "ID", "Key", "Size", "Created", "Expires", "Time to expire" ] %>
+  <% headers << "" if SolidWebUi::Cache.config.enable_delete %>
+  <%= swui_table(headers: headers, empty_message: "The cache is empty.") do %>
     <% @entries.each do |entry| %>
       <tr data-swui-row-href="<%= entry_path(entry) %>">
         <td><%= link_to entry.id, entry_path(entry), data: { turbo_frame: "_top" } %></td>
@@ -16,6 +17,10 @@
         <td><%= short_time(entry.created_at) %></td>
         <td><%= cache_expires_at(@expiry[entry.id]) %></td>
         <td><%= cache_time_to_expire(@expiry[entry.id]) %></td>
+        <% if SolidWebUi::Cache.config.enable_delete %>
+          <td><%= swui_action_button(label: "Delete", url: entry_path(entry), method: :delete,
+                                     danger: true, confirm: "Delete this cache entry?") %></td>
+        <% end %>
       </tr>
     <% end %>
   <% end %>
